@@ -394,7 +394,7 @@ const DemplarApp = () => {
                             rel="noopener noreferrer"
                             className={`${colors.textAccent} hover:opacity-80 font-semibold underline transition-opacity`}
                           >
-                            Jayfeezy's Pond0x Referral Link
+                            Jayfeezy&apos;s Pond0x Referral Link
                           </a>
                         ) : (
                           <span className="text-gray-500 italic">N/A</span>

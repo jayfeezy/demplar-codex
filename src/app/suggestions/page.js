@@ -93,7 +93,7 @@ Thank you!`;
                 />
                 <div className="text-xs text-gray-500 mt-1">
                   {customSubject.length}/100 characters (will be prefixed with
-                  "Demplar: ")
+                  &quot;Demplar: &quot;)
                 </div>
               </div>
 

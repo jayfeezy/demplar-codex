@@ -79,7 +79,7 @@ export default function RootLayout({ children }) {
                   }`}
                 >
                   <Shield className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" />
-                  {/* {user.role} */}"Role"
+                  {/* {user.role} */}Role
                 </div>
                 <button
                   onClick={() => {
