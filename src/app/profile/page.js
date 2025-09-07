@@ -1,24 +1,25 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import { Share } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
 import { ProfileImage } from "@/components/ProfileImage";
 import { PowerBar } from "@/components/PowerBar";
 import { LoreBar } from "@/components/LoreBar";
 import { getFactionColors } from "@/utils/getFactionColors";
-import { characters } from "@/lib/characters";
+import { useNotif } from "@/providers/NotifProvider";
+import { useChar } from "@/providers/CharProvider";
 
 // Pure functions for character data transformation
 const getFaction = (char) => (char.id === 69 ? "NPC" : char.faction);
 const getPowerLevel = (char) => Math.min(char.level * 10, 1000);
 const getLoreLevel = (char) => 100; // Updated lore level for all characters
-
 // Pure functional component for the main application
 const DemplarApp = () => {
+  const { notify } = useNotif();
+
   // State management (isolated side effects)
-  const [chars, setChars] = useState(characters);
-  const [sel, setSel] = useState(null);
-  const [tab, setTab] = useState("home");
+  const { chars, setChars, sel, setSel } = useChar();
   const { favorites, toggleFavorite, isFavorite, removeFavorite } =
     useFavorites();
 
@@ -45,11 +46,6 @@ const DemplarApp = () => {
     }
   };
 
-  const notify = (msg) => {
-    setNotif(msg);
-    setTimeout(() => setNotif(""), 3000);
-  };
-
   return (
     <>
       {!sel && (
@@ -64,12 +60,12 @@ const DemplarApp = () => {
                 Choose a character to view their detailed profile
               </p>
 
-              <button
-                onClick={() => setTab("characters")}
+              <Link
+                href="/characters"
                 className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 font-semibold transition-colors"
               >
                 Browse Characters →
-              </button>
+              </Link>
             </div>
           </div>
         </div>

@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 
-// Custom hook for managing favorites with localStorage
 export const useFavorites = () => {
   const [favorites, setFavorites] = useState(() => {
+    // Make sure window exists (browser environment)
+    if (typeof window === "undefined") return new Set();
+
     try {
       const saved = localStorage.getItem("demplarFavorites");
       return saved ? new Set(JSON.parse(saved)) : new Set();
@@ -13,6 +15,7 @@ export const useFavorites = () => {
     }
   });
 
+  // Persist favorites whenever they change
   useEffect(() => {
     try {
       localStorage.setItem(

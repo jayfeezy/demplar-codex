@@ -1,25 +1,21 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import { ChevronDown, Search } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
 import { ProfileImage } from "@/components/ProfileImage";
 import { PowerBar } from "@/components/PowerBar";
 import { LoreBar } from "@/components/LoreBar";
 import { getFactionColors } from "@/utils/getFactionColors";
-import { characters } from "@/lib/characters";
+import { useChar } from "@/providers/CharProvider";
+import { useNotif } from "@/providers/NotifProvider";
 
-// Pure functions for character data transformation
 const getFaction = (char) => (char.id === 69 ? "NPC" : char.faction);
 const getPowerLevel = (char) => Math.min(char.level * 10, 1000);
-const getLoreLevel = (char) => 100; // Updated lore level for all characters
+const getLoreLevel = (char) => 100;
 
-// Pure functional component for the main application
 const DemplarApp = () => {
-  // State management (isolated side effects)
-  //   const [user, setUser] = useState({ role: "master" });
-  const [chars, setChars] = useState(characters);
-  const [sel, setSel] = useState(null);
-  const [tab, setTab] = useState("characters");
+  const { chars, setChars, sel, setSel } = useChar();
   const [search, setSearch] = useState("");
   const [show, setShow] = useState(false);
   const [levelFilter, setLevelFilter] = useState("all");
@@ -27,15 +23,7 @@ const DemplarApp = () => {
   const { toggleFavorite, isFavorite } = useFavorites();
   const [compareMode, setCompareMode] = useState(false);
   const [compareChars, setCompareChars] = useState([]);
-
-  // Pure function for character of the day
-  const getCharacterOfDay = () => {
-    const today = new Date().toDateString();
-    const seed = today.split("").reduce((a, b) => a + b.charCodeAt(0), 0);
-    return characters[seed % characters.length];
-  };
-
-  const characterOfDay = getCharacterOfDay();
+  const { notify } = useNotif();
 
   // Pure function for filtering characters
   const getFilteredChars = () => {
@@ -78,14 +66,6 @@ const DemplarApp = () => {
 
   const filtered = getFilteredChars();
 
-  // Event handlers (side effects isolated)
-  const handleToggleFavorite = (charId) => {
-    toggleFavorite(charId);
-    notify(
-      isFavorite(charId) ? "Removed from favorites 💔" : "Added to favorites ❤️"
-    );
-  };
-
   const toggleCompare = (char) => {
     const existingIndex = compareChars.findIndex((c) => c.id === char.id);
 
@@ -99,46 +79,6 @@ const DemplarApp = () => {
       notify("Maximum 3 characters for comparison! 🚫");
     }
   };
-
-  const shareCharacter = (char) => {
-    const url = `${window.location.origin}/?char=${char.id}`;
-    const text = `Check out ${char.name} - Level ${char.level} ${char.className} from Demplar! ⚔️`;
-
-    if (navigator.share) {
-      navigator.share({ title: `${char.name} - Demplar`, text, url });
-    } else {
-      navigator.clipboard.writeText(`${text} ${url}`);
-      notify("Character link copied to clipboard! 📋");
-    }
-  };
-
-  const notify = (msg) => {
-    setNotif(msg);
-    setTimeout(() => setNotif(""), 3000);
-  };
-
-  const sendEmail = (subject, body) => {
-    const emailAddress = "your@email.com";
-    const encodedSubject = encodeURIComponent(subject);
-    const encodedBody = encodeURIComponent(body);
-    const mailtoLink = `mailto:${emailAddress}?subject=${encodedSubject}&body=${encodedBody}`;
-
-    try {
-      window.open(mailtoLink, "_self");
-      notify("Opening email client... 📧");
-    } catch (error) {
-      const emailText = `To: ${emailAddress}\nSubject: ${subject}\n\n${body}`;
-      navigator.clipboard
-        .writeText(emailText)
-        .then(() => {
-          notify("Email details copied to clipboard! 📋");
-        })
-        .catch(() => {
-          notify(`Please email: ${emailAddress} with subject: ${subject}`);
-        });
-    }
-  };
-
   return (
     <>
       <div className="space-y-6">
@@ -217,14 +157,14 @@ const DemplarApp = () => {
                     sel && sel.id === c.id ? "bg-yellow-100" : ""
                   }`}
                 >
-                  <button
+                  <Link
                     onClick={() => {
                       setSel(c);
                       setShow(false);
                       setSearch("");
-                      setTab("profile");
                       notify(`Viewing ${c.name}'s profile! ⚔️`);
                     }}
+                    href="profile"
                     className="flex items-center space-x-3 flex-1"
                   >
                     <ProfileImage
@@ -241,12 +181,17 @@ const DemplarApp = () => {
                       </div>
                     </div>
                     <div className="text-xs text-gray-400">#{c.id}</div>
-                  </button>
+                  </Link>
                   <div className="flex space-x-1">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleToggleFavorite(c.id);
+                        toggleFavorite(c.id);
+                        notify(
+                          isFavorite(c.id)
+                            ? "Removed from favorites 💔"
+                            : "Added to favorites ❤️"
+                        );
                       }}
                       className={`p-1 rounded ${
                         isFavorite(c.id) ? "text-red-500" : "text-gray-400"
@@ -296,7 +241,7 @@ const DemplarApp = () => {
               <span className="mr-3">👥</span>
               Character Database
               <span className="ml-auto text-sm font-normal text-gray-500">
-                Showing {filtered.length} of {characters.length} characters
+                Showing {filtered.length} of {chars.length} characters
               </span>
             </h3>
 
@@ -334,7 +279,14 @@ const DemplarApp = () => {
                         </div>
                       </div>
                       <button
-                        onClick={() => handleToggleFavorite(char.id)}
+                        onClick={() => {
+                          toggleFavorite(char.id);
+                          notify(
+                            isFavorite(char.id)
+                              ? "Removed from favorites 💔"
+                              : "Added to favorites ❤️"
+                          );
+                        }}
                         className={`p-2 rounded-full transition-all duration-200 ${
                           isFavorite(char.id)
                             ? "text-red-500 bg-red-50 hover:bg-red-100"
@@ -395,16 +347,16 @@ const DemplarApp = () => {
                     </div>
 
                     <div className="flex space-x-3">
-                      <button
+                      <Link
                         onClick={() => {
                           setSel(char);
-                          setTab("profile");
                           notify(`Viewing ${char.name}! ⚔️`);
                         }}
+                        href="profile"
                         className={`flex-1 ${colors.button} text-white px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg`}
                       >
                         View Profile
-                      </button>
+                      </Link>
                       {compareMode && (
                         <button
                           onClick={() => toggleCompare(char)}

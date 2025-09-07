@@ -1,8 +1,10 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import { ProfileImage } from "@/components/ProfileImage";
 import { getFactionColors } from "@/utils/getFactionColors";
-import { characters } from "@/lib/characters";
+import { useNotif } from "@/providers/NotifProvider";
+import { useChar } from "@/providers/CharProvider";
 
 // Pure functions for character data transformation
 const getFaction = (char) => (char.id === 69 ? "NPC" : char.faction);
@@ -11,7 +13,9 @@ const getLoreLevel = (char) => 100; // Updated lore level for all characters
 
 // Pure functional component for the main application
 const DemplarApp = () => {
-  const [chars, setChars] = useState(characters);
+  const { notify } = useNotif();
+
+  const { chars, setChars, sel, setSel } = useChar();
   const [compareChars, setCompareChars] = useState([]);
 
   // Pure computed values (no side effects)
@@ -37,11 +41,6 @@ const DemplarApp = () => {
     } else {
       notify("Maximum 3 characters for comparison! 🚫");
     }
-  };
-
-  const notify = (msg) => {
-    setNotif(msg);
-    setTimeout(() => setNotif(""), 3000);
   };
 
   return (
@@ -279,16 +278,16 @@ const DemplarApp = () => {
 
                       {/* Action Buttons */}
                       <div className="pt-2 space-y-2">
-                        <button
+                        <Link
                           onClick={() => {
                             setSel(char);
-                            setTab("profile");
                             notify(`Viewing ${char.name}! ⚔️`);
                           }}
+                          link="profile"
                           className={`w-full ${colors.button} text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg`}
                         >
                           View Full Profile
-                        </button>
+                        </Link>
                         <button
                           onClick={() => handleToggleFavorite(char.id)}
                           className={`w-full px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 ${

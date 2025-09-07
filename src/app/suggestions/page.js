@@ -1,17 +1,13 @@
 "use client";
+import { useNotif } from "@/providers/NotifProvider";
 import React, { useState } from "react";
-
 // Pure functional component for the main application
 const DemplarApp = () => {
   // State management (isolated side effects)
   const [user, setUser] = useState({ role: "master" });
   const [customSubject, setCustomSubject] = useState("");
   const [customMessage, setCustomMessage] = useState("");
-
-  const notify = (msg) => {
-    setNotif(msg);
-    setTimeout(() => setNotif(""), 3000);
-  };
+  const { notify } = useNotif();
 
   const sendEmail = (subject, body) => {
     const emailAddress = "your@email.com";

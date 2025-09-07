@@ -1,10 +1,15 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import { characters } from "@/lib/characters";
+import { useNotif } from "@/providers/NotifProvider";
+import { useChar } from "@/providers/CharProvider";
+import { useDark } from "@/providers/DarkProvider";
 
 const DemplarApp = () => {
-  const [chars, setChars] = useState(characters);
-  const [darkMode, setDarkMode] = useState(false);
+  const { notify } = useNotif();
+  const { chars, setSel } = useChar();
+  const { darkMode } = useDark();
   const [newsEntries, setNewsEntries] = useState([
     {
       id: 2,
@@ -35,10 +40,6 @@ const DemplarApp = () => {
     imgs: statsChars.filter((c) => c.profileUrl).length,
   };
 
-  const notify = (msg) => {
-    setNotif(msg);
-    setTimeout(() => setNotif(""), 3000);
-  };
   return (
     <div className="space-y-8">
       <div
@@ -113,13 +114,13 @@ const DemplarApp = () => {
                 const medals = ["🥇", "🥈", "🥉"];
 
                 return topOverall.map((char, index) => (
-                  <button
+                  <Link
                     key={char.id}
-                    onClick={() => {
+                    onClick={(e) => {
                       setSel(char);
-                      setTab("profile");
                       notify(`Viewing ${char.name}! ⚔️`);
                     }}
+                    href="profile"
                     className="w-full flex items-center justify-between p-3 bg-white rounded-lg hover:bg-yellow-50 transition-colors group"
                   >
                     <div className="flex items-center space-x-3">
@@ -141,7 +142,7 @@ const DemplarApp = () => {
                         {char.faction}
                       </div>
                     </div>
-                  </button>
+                  </Link>
                 ));
               })()}
             </div>
@@ -199,13 +200,13 @@ const DemplarApp = () => {
                     </h4>
                     <div className="space-y-2">
                       {factionChars.map((char, index) => (
-                        <button
+                        <Link
                           key={char.id}
                           onClick={() => {
                             setSel(char);
-                            setTab("profile");
                             notify(`Viewing ${char.name}! ⚔️`);
                           }}
+                          href="profile"
                           className={`w-full flex items-center justify-between p-2 bg-white rounded hover:shadow-md transition-all group ${colors.hover}`}
                         >
                           <div className="flex items-center space-x-2">
@@ -224,7 +225,7 @@ const DemplarApp = () => {
                           <div className={`text-lg font-bold ${colors.level}`}>
                             Lv. {char.level}
                           </div>
-                        </button>
+                        </Link>
                       ))}
                     </div>
                   </div>
@@ -235,24 +236,24 @@ const DemplarApp = () => {
         </div>
 
         <div className="mt-6 text-center">
-          <button
-            onClick={() => setTab("characters")}
+          <Link
+            href="characters"
             className="text-sm text-gray-600 hover:text-gray-800 transition-colors"
           >
             View Full Character Rankings →
-          </button>
+          </Link>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-        <button
+        <Link
           onClick={() => {
             const randomChar =
               characters[Math.floor(Math.random() * characters.length)];
             setSel(randomChar);
-            setTab("profile");
             notify(`Surprise! Viewing ${randomChar.name} 🎲`);
           }}
+          href="profile"
           className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 hover:border-blue-400 rounded-xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group"
         >
           <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-300">
@@ -262,10 +263,10 @@ const DemplarApp = () => {
             Random Character
           </div>
           <div className="text-sm text-blue-600">Discover someone new!</div>
-        </button>
+        </Link>
 
-        <button
-          onClick={() => setTab("characters")}
+        <Link
+          href="characters"
           className="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-200 hover:border-red-400 rounded-xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group"
         >
           <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-300">
@@ -275,10 +276,10 @@ const DemplarApp = () => {
             Browse Characters
           </div>
           <div className="text-sm text-red-600">Search & explore all!</div>
-        </button>
+        </Link>
 
-        <button
-          onClick={() => setTab("news")}
+        <Link
+          href="news"
           className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 hover:border-green-400 rounded-xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group"
         >
           <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-300">
@@ -288,10 +289,10 @@ const DemplarApp = () => {
             Latest News
           </div>
           <div className="text-sm text-green-600">Read the updates!</div>
-        </button>
+        </Link>
 
-        <button
-          onClick={() => setTab("compare")}
+        <Link
+          href="compare"
           className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 hover:border-purple-400 rounded-xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group"
         >
           <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-300">
@@ -301,10 +302,10 @@ const DemplarApp = () => {
             Compare Heroes
           </div>
           <div className="text-sm text-purple-600">Battle analysis!</div>
-        </button>
+        </Link>
 
-        <button
-          onClick={() => setTab("suggestions")}
+        <Link
+          href="suggestions"
           className="bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-200 hover:border-orange-400 rounded-xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group"
         >
           <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-300">
@@ -314,7 +315,7 @@ const DemplarApp = () => {
             Send Feedback
           </div>
           <div className="text-sm text-orange-600">Share your ideas!</div>
-        </button>
+        </Link>
       </div>
     </div>
   );

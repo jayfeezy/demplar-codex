@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { characters } from "@/lib/characters";
+import { useNotif } from "@/providers/NotifProvider";
 
 // Pure functional component for the main application
 const DemplarApp = () => {
@@ -9,11 +10,7 @@ const DemplarApp = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
-
-  const notify = (msg) => {
-    setNotif(msg);
-    setTimeout(() => setNotif(""), 3000);
-  };
+  const { notify } = useNotif();
 
   const attemptLogin = () => {
     setErr("");

@@ -1,11 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import { NewsArticle } from "@/components/NewsArticle";
+import { useNotif } from "@/providers/NotifProvider";
 
 // Pure functional component for the main application
 const DemplarApp = () => {
   // State management (isolated side effects)
   const [user, setUser] = useState({ role: "master" });
+  const { notify } = useNotif();
   const [newNewsTitle, setNewNewsTitle] = useState("");
   const [newNewsContent, setNewNewsContent] = useState("");
   const [newsEntries, setNewsEntries] = useState([
@@ -26,11 +28,6 @@ const DemplarApp = () => {
       author: "@DemplarOfficial",
     },
   ]);
-
-  const notify = (msg) => {
-    setNotif(msg);
-    setTimeout(() => setNotif(""), 3000);
-  };
 
   const addNewsEntry = () => {
     if (!newNewsTitle.trim() || !newNewsContent.trim()) {

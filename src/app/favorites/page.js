@@ -1,31 +1,15 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import { useFavorites } from "@/hooks/useFavorites";
-import { characters } from "@/lib/characters";
+import { useNotif } from "@/providers/NotifProvider";
+import { useChar } from "@/providers/CharProvider";
 
 const DemplarApp = () => {
-  const [user, setUser] = useState({ role: "master" });
-  const [chars, setChars] = useState(characters);
-  const [sel, setSel] = useState(null);
-  const [tab, setTab] = useState("home");
+  const { chars, setChars, sel, setSel } = useChar();
   const { favorites, toggleFavorite, isFavorite, removeFavorite } =
     useFavorites();
-
-  // Pure computed values (no side effects)
-  const statsChars = chars.filter((c) => c.id !== 69);
-  const stats = {
-    total: statsChars.length,
-    avg: Math.round(
-      statsChars.reduce((s, c) => s + c.level, 0) / statsChars.length
-    ),
-    max: Math.max(...statsChars.map((c) => c.level)),
-    imgs: statsChars.filter((c) => c.profileUrl).length,
-  };
-
-  const notify = (msg) => {
-    setNotif(msg);
-    setTimeout(() => setNotif(""), 3000);
-  };
+  const { notify } = useNotif();
 
   return (
     <div className="space-y-6">
@@ -42,12 +26,12 @@ const DemplarApp = () => {
             <p className="text-sm mb-6">
               Start adding characters to your favorites to see them here!
             </p>
-            <button
-              onClick={() => setTab("characters")}
+            <Link
+              href="characters"
               className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 font-semibold transition-colors"
             >
               Browse Characters →
-            </button>
+            </Link>
           </div>
         ) : (
           <div>
@@ -63,12 +47,12 @@ const DemplarApp = () => {
 
                 return (
                   <div key={char.id} className="relative group">
-                    <button
+                    <Link
                       onClick={() => {
                         setSel(char);
-                        setTab("profile");
                         notify(`Viewing ${char.name}! ⚔️`);
                       }}
+                      href="profile"
                       className="w-full aspect-square rounded-xl overflow-hidden border-2 border-gray-200 hover:border-red-400 transition-all hover:shadow-lg"
                     >
                       <div className="relative w-full h-full bg-gradient-to-br from-gray-100 to-gray-200">
@@ -108,7 +92,7 @@ const DemplarApp = () => {
                           </div>
                         </div>
                       </div>
-                    </button>
+                    </Link>
 
                     <button
                       onClick={(e) => {

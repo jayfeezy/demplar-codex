@@ -1,20 +1,17 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import { Shield, Eye, Download } from "lucide-react";
 import { ProfileImage } from "@/components/ProfileImage";
-import { characters } from "@/lib/characters";
+import { useNotif } from "@/providers/NotifProvider";
+import { useChar } from "@/providers/CharProvider";
 
 // Pure functional component for the main application
 const DemplarApp = () => {
   // State management (isolated side effects)
   const [user, setUser] = useState({ role: "master" });
-  const [chars, setChars] = useState(characters);
-  const [sel, setSel] = useState(null);
-  const [tab, setTab] = useState("home");
-  const notify = (msg) => {
-    setNotif(msg);
-    setTimeout(() => setNotif(""), 3000);
-  };
+  const { chars, setChars, sel, setSel } = useChar();
+  const { notify } = useNotif();
 
   const update = (id, field, val) => {
     setChars((p) => p.map((c) => (c.id === id ? { ...c, [field]: val } : c)));
@@ -72,16 +69,16 @@ const DemplarApp = () => {
                       />
                       <div className="text-xs mt-1 text-gray-500">#{c.id}</div>
                     </div>
-                    <button
+                    <Link
                       onClick={() => {
                         setSel(c);
-                        setTab("profile");
                         notify(`Viewing ${c.name} ⚔️`);
                       }}
+                      href="profile"
                       className="px-3 py-2 rounded text-sm bg-blue-500 hover:bg-blue-600 text-white"
                     >
                       <Eye className="w-4 h-4" />
-                    </button>
+                    </Link>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
@@ -247,16 +244,16 @@ const DemplarApp = () => {
                         />
                       </td>
                       <td className="p-3">
-                        <button
+                        <Link
                           onClick={() => {
                             setSel(c);
-                            setTab("profile");
                             notify(`Viewing ${c.name} ⚔️`);
                           }}
+                          href="profile"
                           className="px-2 py-1 rounded text-xs bg-blue-500 hover:bg-blue-600 text-white"
                         >
                           <Eye className="w-3 h-3" />
-                        </button>
+                        </Link>
                       </td>
                     </tr>
                   ))}
