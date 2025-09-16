@@ -9,6 +9,8 @@ import { LoreBar } from "@/components/LoreBar";
 import { getFactionColors } from "@/utils/getFactionColors";
 import { useNotif } from "@/providers/NotifProvider";
 import { useChar } from "@/providers/CharProvider";
+import clsx from "clsx";
+// need to clsx this page still
 
 // Pure functions for character data transformation
 const getFaction = (char) => (char.id === 69 ? "NPC" : char.faction);
@@ -76,12 +78,15 @@ const DemplarApp = () => {
           <div className="lg:col-span-2 bg-white rounded-xl shadow border">
             {(() => {
               const faction = getFaction(sel);
-              const colors = getFactionColors(faction);
+              const colors = getFactionColors(faction?.name);
 
               return (
                 <>
                   <div
-                    className={`bg-gradient-to-r ${colors.headerGradient} text-white p-6 rounded-t-xl`}
+                    className={clsx(
+                      `bg-gradient-to-r text-white p-6 rounded-t-xl`,
+                      colors.headerGradient
+                    )}
                   >
                     <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
                       <div className="flex-shrink-0">
@@ -100,7 +105,7 @@ const DemplarApp = () => {
                             Level {sel.level}
                           </div>
                           <div className="bg-white/20 text-white px-4 py-2 rounded-full font-semibold">
-                            {faction}
+                            {faction?.name}
                           </div>
                         </div>
 
@@ -111,12 +116,12 @@ const DemplarApp = () => {
                           <div className="space-y-3">
                             <PowerBar
                               value={getPowerLevel(sel)}
-                              faction={faction}
+                              faction={faction?.name}
                               className="w-full"
                             />
                             <LoreBar
                               value={getLoreLevel(sel)}
-                              faction={faction}
+                              faction={faction?.name}
                               className="w-full"
                             />
                           </div>
@@ -144,7 +149,7 @@ const DemplarApp = () => {
                           Location
                         </div>
                         <div className={`text-lg font-bold text-gray-800`}>
-                          {sel.location}
+                          {sel.location?.name}
                         </div>
                       </div>
                       {sel.twitterHandle && (
@@ -192,7 +197,7 @@ const DemplarApp = () => {
                             </div>
                             <PowerBar
                               value={getPowerLevel(sel)}
-                              faction={faction}
+                              faction={faction?.name}
                               className="w-full"
                             />
                             <div className="text-xs text-slate-600 mt-2">
@@ -210,7 +215,7 @@ const DemplarApp = () => {
                             </div>
                             <LoreBar
                               value={getLoreLevel(sel)}
-                              faction={faction}
+                              faction={faction?.name}
                               className="w-full"
                             />
                             <div className="text-xs text-slate-600 mt-2">
@@ -248,7 +253,7 @@ const DemplarApp = () => {
                                   Faction
                                 </span>
                                 <span className="text-xs font-bold text-slate-800">
-                                  {faction}
+                                  {faction?.name}
                                 </span>
                               </div>
                               <div className="flex justify-between">

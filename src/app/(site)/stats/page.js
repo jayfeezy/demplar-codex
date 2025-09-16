@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { characters } from "@/lib/characters";
+import clsx from "clsx";
 
 // Pure functional component for the main application
 const DemplarApp = () => {
@@ -131,11 +132,18 @@ const DemplarApp = () => {
                 return (
                   <div
                     key={faction}
-                    className={`${colors.bg} rounded-xl p-4 sm:p-6 border-2 ${colors.border}`}
+                    className={clsx(
+                      `rounded-xl p-4 sm:p-6 border-2`,
+                      colors.bg,
+                      colors.border
+                    )}
                   >
                     <div className="flex items-center justify-between mb-4">
                       <h4
-                        className={`text-lg sm:text-xl font-bold ${colors.accent}`}
+                        className={clsx(
+                          `text-lg sm:text-xl font-bold`,
+                          colors.accent
+                        )}
                       >
                         {faction}
                       </h4>
@@ -143,29 +151,33 @@ const DemplarApp = () => {
                     </div>
 
                     <div className="space-y-3">
-                      <div className={`${colors.statBg} rounded-lg p-3`}>
+                      <div className={clsx(colors.statBg, `rounded-lg p-3`)}>
                         <div className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
                           Average Level
                         </div>
-                        <div className={`text-2xl font-bold ${colors.accent}`}>
+                        <div
+                          className={clsx(`text-2xl font-bold`, colors.accent)}
+                        >
                           {avgLevel}
                         </div>
                       </div>
 
-                      <div className={`${colors.statBg} rounded-lg p-3`}>
+                      <div className={clsx(`rounded-lg p-3`, colors.statBg)}>
                         <div className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
                           Total Members
                         </div>
-                        <div className={`text-2xl font-bold ${colors.accent}`}>
+                        <div
+                          className={clsx(`text-2xl font-bold`, colors.accent)}
+                        >
                           {stats.count}
                         </div>
                       </div>
 
-                      <div className={`${colors.statBg} rounded-lg p-3`}>
+                      <div className={clsx(`rounded-lg p-3`, colors.statBg)}>
                         <div className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
                           Highest Level
                         </div>
-                        <div className={`font-bold ${colors.accent}`}>
+                        <div className={clsx(`font-bold`, colors.accent)}>
                           <div className="text-lg">
                             {stats.highestChar.name}
                           </div>

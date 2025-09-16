@@ -9,20 +9,20 @@ import { LoreBar } from "@/components/LoreBar";
 import { getFactionColors } from "@/utils/getFactionColors";
 import { useChar } from "@/providers/CharProvider";
 import { useNotif } from "@/providers/NotifProvider";
+import clsx from "clsx";
 
-const getFaction = (char) => (char.id === 69 ? "NPC" : char.faction);
+const getFaction = (char) => (char._id === 69 ? "NPC" : char.faction);
 const getPowerLevel = (char) => Math.min(char.level * 10, 1000);
 const getLoreLevel = (char) => 100;
 
 const DemplarApp = () => {
-  const { chars, setChars, sel, setSel } = useChar();
+  const { chars, setChars, sel, setSel, compChar, setCompChar } = useChar();
   const [search, setSearch] = useState("");
   const [show, setShow] = useState(false);
   const [levelFilter, setLevelFilter] = useState("all");
   const [factionFilter, setFactionFilter] = useState("all");
   const { toggleFavorite, isFavorite } = useFavorites();
   const [compareMode, setCompareMode] = useState(false);
-  const [compareChars, setCompareChars] = useState([]);
   const { notify } = useNotif();
 
   // Pure function for filtering characters
@@ -30,7 +30,7 @@ const DemplarApp = () => {
     let filtered = chars.filter((c) => {
       const matchesSearch =
         c.name.toLowerCase().includes(search.toLowerCase()) ||
-        c.className.toLowerCase().includes(search.toLowerCase());
+        c?.className?.toLowerCase().includes(search.toLowerCase());
 
       const levelRanges = {
         "1-10": [1, 10],
@@ -54,8 +54,8 @@ const DemplarApp = () => {
     });
 
     filtered.sort((a, b) => {
-      const aFav = isFavorite(a.id);
-      const bFav = isFavorite(b.id);
+      const aFav = isFavorite(a._id);
+      const bFav = isFavorite(b._id);
       if (aFav !== bFav) return bFav - aFav;
       if (a.level !== b.level) return b.level - a.level;
       return a.name.localeCompare(b.name);
@@ -67,13 +67,13 @@ const DemplarApp = () => {
   const filtered = getFilteredChars();
 
   const toggleCompare = (char) => {
-    const existingIndex = compareChars.findIndex((c) => c.id === char.id);
+    const existingIndex = compChar.findIndex((c) => c._id === char._id);
 
     if (existingIndex >= 0) {
-      setCompareChars(compareChars.filter((c) => c.id !== char.id));
+      setCompChar(compChar.filter((c) => c._id !== char._id));
       notify(`Removed ${char.name} from comparison 📊`);
-    } else if (compareChars.length < 3) {
-      setCompareChars([...compareChars, char]);
+    } else if (compChar.length < 3) {
+      setCompChar([...compChar, char]);
       notify(`Added ${char.name} to comparison ⚖️`);
     } else {
       notify("Maximum 3 characters for comparison! 🚫");
@@ -124,9 +124,10 @@ const DemplarApp = () => {
               className="bg-yellow-600 text-black px-3 py-2 rounded hover:bg-yellow-500 w-full sm:w-auto"
             >
               <ChevronDown
-                className={`w-5 h-5 transition-transform mx-auto sm:mx-0 ${
+                className={clsx(
+                  `w-5 h-5 transition-transform mx-auto sm:mx-0`,
                   show ? "rotate-180" : ""
-                }`}
+                )}
               />
             </button>
             <button
@@ -137,103 +138,107 @@ const DemplarApp = () => {
                     ? "Compare mode disabled 📊"
                     : "Compare mode enabled! Click + next to characters to compare ⚖️"
                 );
-                if (!compareMode) setCompareChars([]);
+                if (!compareMode) setCompChar([]);
               }}
-              className={`px-3 py-2 rounded w-full sm:w-auto transition-all ${
+              className={clsx(
+                `px-3 py-2 rounded w-full sm:w-auto transition-all hover:opacity-80`,
                 compareMode
                   ? "bg-purple-600 text-white"
                   : "bg-gray-600 text-white"
-              } hover:opacity-80`}
+              )}
             >
-              ⚖️ Compare {compareChars.length > 0 && `(${compareChars.length})`}
+              ⚖️ Compare {compChar.length > 0 && `(${compChar.length})`}
             </button>
-          </div>
-          {show && filtered && filtered.length >= 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-yellow-600 rounded shadow-lg max-h-60 sm:max-h-80 overflow-y-auto z-50">
-              {filtered.map((c) => (
-                <div
-                  key={c.id}
-                  className={`w-full text-left px-4 py-3 hover:bg-yellow-50 border-b flex items-center space-x-3 ${
-                    sel && sel.id === c.id ? "bg-yellow-100" : ""
-                  }`}
-                >
-                  <Link
-                    onClick={() => {
-                      setSel(c);
-                      setShow(false);
-                      setSearch("");
-                      notify(`Viewing ${c.name}'s profile! ⚔️`);
-                    }}
-                    href="profile"
-                    className="flex items-center space-x-3 flex-1"
+            {show && filtered && filtered.length >= 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-yellow-600 rounded shadow-lg max-h-60 sm:max-h-80 overflow-y-auto z-50">
+                {filtered.map((c) => (
+                  <div
+                    key={c._id}
+                    className={clsx(
+                      `w-full text-left px-4 py-3 hover:bg-yellow-50 border-b flex items-center space-x-3`,
+                      sel && sel._id === c._id ? "bg-yellow-100" : ""
+                    )}
                   >
-                    <ProfileImage
-                      src={c.profileUrl}
-                      alt={c.name}
-                      size="w-8 h-8 sm:w-10 sm:h-10"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-900 truncate">
-                        {c.name}
-                      </div>
-                      <div className="text-xs sm:text-sm text-gray-500 truncate">
-                        Level {c.level} • {c.className}
-                      </div>
-                    </div>
-                    <div className="text-xs text-gray-400">#{c.id}</div>
-                  </Link>
-                  <div className="flex space-x-1">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorite(c.id);
-                        notify(
-                          isFavorite(c.id)
-                            ? "Removed from favorites 💔"
-                            : "Added to favorites ❤️"
-                        );
+                    <Link
+                      onClick={() => {
+                        setSel(c);
+                        setShow(false);
+                        setSearch("");
+                        notify(`Viewing ${c.name}'s profile! ⚔️`);
                       }}
-                      className={`p-1 rounded ${
-                        isFavorite(c.id) ? "text-red-500" : "text-gray-400"
-                      } hover:text-red-500`}
-                      title={
-                        isFavorite(c.id)
-                          ? "Remove from favorites"
-                          : "Add to favorites"
-                      }
+                      href="profile"
+                      className="flex items-center space-x-3 flex-1"
                     >
-                      {isFavorite(c.id) ? "❤️" : "🤍"}
-                    </button>
-                    {compareMode && (
+                      <ProfileImage
+                        src={c.profileUrl}
+                        alt={c.name}
+                        size="w-8 h-8 sm:w-10 sm:h-10"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-gray-900 truncate">
+                          {c.name}
+                        </div>
+                        <div className="text-xs sm:text-sm text-gray-500 truncate">
+                          Level {c.level} • {c.className}
+                        </div>
+                      </div>
+                      <div className="text-xs text-gray-400">#{c._id}</div>
+                    </Link>
+                    <div className="flex space-x-1">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          toggleCompare(c);
+                          toggleFavorite(c._id);
+                          notify(
+                            isFavorite(c._id)
+                              ? "Removed from favorites 💔"
+                              : "Added to favorites ❤️"
+                          );
                         }}
-                        className={`p-1 rounded text-xs font-bold transition-all ${
-                          compareChars.find((ch) => ch.id === c.id)
-                            ? "bg-purple-600 text-white"
-                            : "bg-gray-200 text-gray-600 hover:bg-purple-100"
-                        }`}
+                        className={clsx(
+                          `p-1 rounded hover:text-red-500`,
+                          isFavorite(c._id) ? "text-red-500" : "text-gray-400"
+                        )}
                         title={
-                          compareChars.find((ch) => ch.id === c.id)
-                            ? "Remove from comparison"
-                            : "Add to comparison"
+                          isFavorite(c._id)
+                            ? "Remove from favorites"
+                            : "Add to favorites"
                         }
                       >
-                        {compareChars.find((ch) => ch.id === c.id) ? "✓" : "+"}
+                        {isFavorite(c._id) ? "❤️" : "🤍"}
                       </button>
-                    )}
+                      {compareMode && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleCompare(c);
+                          }}
+                          className={clsx(
+                            `p-1 rounded text-xs font-bold transition-all`,
+                            compChar.find((ch) => ch._id === c._id)
+                              ? "bg-purple-600 text-white"
+                              : "bg-gray-200 text-gray-600 hover:bg-purple-100"
+                          )}
+                          title={
+                            compChar.find((ch) => ch._id === c._id)
+                              ? "Remove from comparison"
+                              : "Add to comparison"
+                          }
+                        >
+                          {compChar.find((ch) => ch._id === c._id) ? "✓" : "+"}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-              {filtered.length === 0 && (
-                <div className="px-4 py-6 text-gray-500 text-center">
-                  No characters found
-                </div>
-              )}
-            </div>
-          )}
+                ))}
+                {filtered.length === 0 && (
+                  <div className="px-4 py-6 text-gray-500 text-center">
+                    No characters found
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
         <div className="space-y-6">
           <div className="bg-white rounded-xl shadow border p-6">
@@ -252,8 +257,12 @@ const DemplarApp = () => {
 
                 return (
                   <div
-                    key={char.id}
-                    className={`${colors.gradient} rounded-xl p-6 hover:shadow-xl transition-all duration-300 border-2 ${colors.border} hover:-translate-y-1`}
+                    key={char._id}
+                    className={clsx(
+                      `rounded-xl p-6 hover:shadow-xl transition-all duration-300 border-2 hover:-translate-y-1`,
+                      colors.gradient,
+                      colors.border
+                    )}
                   >
                     <div className="flex items-center space-x-4 mb-4">
                       <ProfileImage
@@ -263,46 +272,62 @@ const DemplarApp = () => {
                       />
                       <div className="flex-1 min-w-0">
                         <h4
-                          className={`font-bold text-lg truncate mb-2 ${colors.textAccent}`}
+                          className={clsx(
+                            `font-bold text-lg truncate mb-2`,
+                            colors.textAccent
+                          )}
                         >
                           {char.name}
                         </h4>
                         <div
-                          className={`text-sm font-bold px-3 py-1 rounded-full ${colors.levelBg} text-white inline-block mb-1 shadow-md`}
+                          className={clsx(
+                            `text-sm font-bold px-3 py-1 rounded-full text-white inline-block mb-1 shadow-md`,
+                            colors.levelBg
+                          )}
                         >
                           Level {char.level}
                         </div>
                         <div
-                          className={`text-xs font-semibold px-2 py-1 rounded-full ${colors.factionBg} text-white inline-block uppercase tracking-wide shadow-sm`}
+                          className={clsx(
+                            `text-xs font-semibold px-2 py-1 rounded-full text-white inline-block uppercase tracking-wide shadow-sm`,
+                            colors.factionBg
+                          )}
                         >
-                          {faction}
+                          {faction?.name}
                         </div>
                       </div>
                       <button
                         onClick={() => {
-                          toggleFavorite(char.id);
+                          toggleFavorite(char._id);
                           notify(
-                            isFavorite(char.id)
+                            isFavorite(char._id)
                               ? "Removed from favorites 💔"
                               : "Added to favorites ❤️"
                           );
                         }}
-                        className={`p-2 rounded-full transition-all duration-200 ${
-                          isFavorite(char.id)
+                        className={clsx(
+                          `p-2 rounded-full transition-all duration-200 shadow-sm`,
+                          isFavorite(char._id)
                             ? "text-red-500 bg-red-50 hover:bg-red-100"
                             : "text-gray-400 bg-white/50 hover:bg-white hover:text-red-400"
-                        } shadow-sm`}
+                        )}
                       >
-                        {isFavorite(char.id) ? "❤️" : "🤍"}
+                        {isFavorite(char._id) ? "❤️" : "🤍"}
                       </button>
                     </div>
 
                     <div className="space-y-3 mb-6">
                       <div
-                        className={`rounded-lg p-3 border bg-white/70 ${colors.borderAccent}`}
+                        className={clsx(
+                          `rounded-lg p-3 border bg-white/70`,
+                          colors.borderAccent
+                        )}
                       >
                         <div
-                          className={`text-xs font-medium uppercase tracking-wide mb-1 ${colors.textAccent}`}
+                          className={clsx(
+                            `text-xs font-medium uppercase tracking-wide mb-1`,
+                            colors.textAccent
+                          )}
                         >
                           Class
                         </div>
@@ -311,35 +336,47 @@ const DemplarApp = () => {
                         </div>
                       </div>
                       <div
-                        className={`rounded-lg p-3 border bg-white/70 ${colors.borderAccent}`}
+                        className={clsx(
+                          `rounded-lg p-3 border bg-white/70`,
+                          colors.borderAccent
+                        )}
                       >
                         <div
-                          className={`text-xs font-medium uppercase tracking-wide mb-1 ${colors.textAccent}`}
+                          className={clsx(
+                            `text-xs font-medium uppercase tracking-wide mb-1`,
+                            colors.textAccent
+                          )}
                         >
                           Location
                         </div>
                         <div className="text-sm font-semibold text-gray-800">
-                          {char.location}
+                          {char?.location?.name}
                         </div>
                       </div>
 
                       <div
-                        className={`bg-white/70 rounded-lg p-3 border ${colors.borderAccent}`}
+                        className={clsx(
+                          `bg-white/70 rounded-lg p-3 border`,
+                          colors.borderAccent
+                        )}
                       >
                         <div
-                          className={`text-xs font-medium uppercase tracking-wide mb-2 ${colors.textAccent}`}
+                          className={clsx(
+                            `text-xs font-medium uppercase tracking-wide mb-2`,
+                            colors.textAccent
+                          )}
                         >
                           Character Stats
                         </div>
                         <div className="space-y-2">
                           <PowerBar
                             value={getPowerLevel(char)}
-                            faction={faction}
+                            faction={faction?.name}
                             className="w-full"
                           />
                           <LoreBar
                             value={getLoreLevel(char)}
-                            faction={faction}
+                            faction={faction?.name}
                             className="w-full"
                           />
                         </div>
@@ -353,22 +390,24 @@ const DemplarApp = () => {
                           notify(`Viewing ${char.name}! ⚔️`);
                         }}
                         href="profile"
-                        className={`flex-1 ${colors.button} text-white px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg`}
+                        className={clsx(
+                          `flex-1 text-white px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg`,
+                          colors.button
+                        )}
                       >
                         View Profile
                       </Link>
                       {compareMode && (
                         <button
                           onClick={() => toggleCompare(char)}
-                          className={`px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                            compareChars.find((c) => c.id === char.id)
+                          className={clsx(
+                            `px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200`,
+                            compChar.find((c) => c._id === char._id)
                               ? "bg-purple-600 text-white shadow-md"
                               : "bg-gray-200 text-gray-600 hover:bg-purple-100 hover:text-purple-600"
-                          }`}
+                          )}
                         >
-                          {compareChars.find((c) => c.id === char.id)
-                            ? "✓"
-                            : "+"}
+                          {compChar.find((c) => c._id === char._id) ? "✓" : "+"}
                         </button>
                       )}
                     </div>

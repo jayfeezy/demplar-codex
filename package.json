@@ -4,15 +4,26 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build:turbo": "next build --turbopack",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@portabletext/react": "^4.0.3",
+    "@sanity/image-url": "^1.2.0",
+    "@sanity/vision": "^4.6.1",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.57.2",
+    "@vercel/speed-insights": "^1.2.0",
+    "clsx": "^2.1.1",
     "lucide-react": "^0.542.0",
     "next": "15.5.2",
+    "next-sanity": "^10.1.1",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "sanity": "^4.6.1",
+    "styled-components": "^6.1.19"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useNotif } from "@/providers/NotifProvider";
 import { useChar } from "@/providers/CharProvider";
+import clsx from "clsx";
 
 const DemplarApp = () => {
   const { chars, setChars, sel, setSel } = useChar();
@@ -42,21 +43,22 @@ const DemplarApp = () => {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
               {Array.from(favorites).map((charId) => {
-                const char = chars.find((c) => c.id === charId);
+                const char = chars.find((c) => c._id === charId);
                 if (!char) return null;
 
                 return (
-                  <div key={char.id} className="relative group">
+                  <div key={char._id} className="relative group">
                     <Link
                       onClick={() => {
                         setSel(char);
                         notify(`Viewing ${char.name}! ⚔️`);
                       }}
                       href="profile"
-                      className="w-full aspect-square rounded-xl overflow-hidden border-2 border-gray-200 hover:border-red-400 transition-all hover:shadow-lg"
+                      className="inline-block w-full aspect-square rounded-xl overflow-hidden border-2 border-gray-200 hover:border-red-400 transition-all hover:shadow-lg"
                     >
                       <div className="relative w-full h-full bg-gradient-to-br from-gray-100 to-gray-200">
                         {char.profileUrl ? (
+                          // Update to next Image component
                           <img
                             src={char.profileUrl}
                             alt={char.name}
@@ -68,9 +70,12 @@ const DemplarApp = () => {
                           />
                         ) : null}
                         <div
-                          className={`${
+                          className={clsx(
+                            `
+                            w-full h-full items-center justify-center text-2xl font-bold text-gray-600 bg-gradient-to-br from-gray-100 to-gray-200`,
+
                             char.profileUrl ? "hidden" : "flex"
-                          } w-full h-full items-center justify-center text-2xl font-bold text-gray-600 bg-gradient-to-br from-gray-100 to-gray-200`}
+                          )}
                           style={char.profileUrl ? { display: "none" } : {}}
                         >
                           {char.name
@@ -97,7 +102,7 @@ const DemplarApp = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        removeFavorite(char.id);
+                        removeFavorite(char._id);
                         notify(`${char.name} removed from favorites 💔`);
                       }}
                       className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-md opacity-0 group-hover:opacity-100"

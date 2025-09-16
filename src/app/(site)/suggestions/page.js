@@ -1,5 +1,6 @@
 "use client";
 import { useNotif } from "@/providers/NotifProvider";
+import clsx from "clsx";
 import React, { useState } from "react";
 // Pure functional component for the main application
 const DemplarApp = () => {
@@ -113,11 +114,13 @@ Thank you!`;
               <button
                 onClick={handleCustomEmail}
                 disabled={!customSubject.trim()}
-                className={`w-full py-3 px-6 rounded-lg font-semibold transition-all ${
+                className={clsx(
+                  `w-full py-3 px-6 rounded-lg font-semibold transition-all`,
+
                   customSubject.trim()
                     ? "bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+                )}
               >
                 📧 Send Custom Message
               </button>

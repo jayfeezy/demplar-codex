@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { formatContent } from "./formatContent";
 import { ChevronDown } from "lucide-react";
+import { PortableText } from "@portabletext/react";
+import { toPlainText } from "@portabletext/toolkit";
 
 // Pure functional component for power bars
 export const NewsArticle = ({
@@ -12,8 +14,11 @@ export const NewsArticle = ({
   canDelete,
 }) => {
   const [showFull, setShowFull] = useState(false);
-  const previewLength = 300; // Characters to show in preview
-  const isLongArticle = entry.content.length > previewLength;
+  const previewLength = 100; // Characters to show in preview
+  const news = entry.content || entry.body;
+  const plainBody = toPlainText(news);
+
+  const isLongArticle = plainBody.length > previewLength;
 
   return (
     <article
@@ -46,7 +51,9 @@ export const NewsArticle = ({
               <div className="flex items-center space-x-1">
                 <span>📅</span>
                 <time dateTime={entry.date}>
-                  {new Date(entry.date).toLocaleDateString("en-US", {
+                  {new Date(
+                    entry?.date || entry.publishedAt
+                  ).toLocaleDateString("en-US", {
                     weekday: "long",
                     year: "numeric",
                     month: "long",
@@ -56,9 +63,9 @@ export const NewsArticle = ({
               </div>
               <div className="flex items-center space-x-1">
                 <span>✍️</span>
-                <span>{entry.author}</span>
+                <span>{entry.author.name}</span>
               </div>
-              {entry.content.length > 500 && (
+              {news.length > 500 && (
                 <div className="flex items-center space-x-1">
                   <span>📖</span>
                   <span>
@@ -88,9 +95,9 @@ export const NewsArticle = ({
         {isLongArticle && !showFull ? (
           <>
             <div className="prose prose-sm sm:prose-base max-w-none">
-              <p className="leading-relaxed">
-                {entry.content.substring(0, previewLength)}...
-              </p>
+              {/* <p className="leading-relaxed"> */}
+              <PortableText value={truncatePortableText(news, 50)} />
+              {/* </p> */}
             </div>
             <button
               onClick={() => setShowFull(true)}
@@ -109,7 +116,11 @@ export const NewsArticle = ({
           <>
             <div className="prose prose-sm sm:prose-base max-w-none">
               <div className="article-content">
-                {formatContent(entry.content)}
+                {entry?.content?.length ? (
+                  formatContent(news)
+                ) : (
+                  <PortableText value={news} />
+                )}
               </div>
             </div>
             {isLongArticle && (
@@ -132,3 +143,43 @@ export const NewsArticle = ({
     </article>
   );
 };
+
+function truncatePortableText(blocks, wordLimit = 100) {
+  let wordCount = 0;
+  const truncated = [];
+
+  for (const block of blocks) {
+    if (block._type === "block" && Array.isArray(block.children)) {
+      const newChildren = [];
+
+      for (const child of block.children) {
+        const words = child.text.split(/\s+/).filter(Boolean);
+        if (wordCount + words.length <= wordLimit) {
+          // Add the whole span
+          newChildren.push(child);
+          wordCount += words.length;
+        } else {
+          // Only take the remaining words
+          const remaining = wordLimit - wordCount;
+          if (remaining > 0) {
+            newChildren.push({
+              ...child,
+              text: words.slice(0, remaining).join(" ") + "…",
+            });
+          }
+          wordCount = wordLimit;
+          break;
+        }
+      }
+
+      truncated.push({ ...block, children: newChildren });
+
+      if (wordCount >= wordLimit) break;
+    } else {
+      // Non-text blocks (images, embeds, etc.)
+      truncated.push(block);
+    }
+  }
+
+  return truncated;
+}
