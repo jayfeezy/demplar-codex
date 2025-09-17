@@ -316,7 +316,7 @@ const DemplarApp = () => {
                       {/* Action Buttons */}
                       <div className="pt-2 space-y-2">
                         <Link
-                          href="profile"
+                          href={`/characters/${char.name.toLowerCase().replace(/ /g, "-")}`}
                           onClick={() => {
                             setSel(char);
                             notify(`Viewing ${char.name}! ⚔️`);

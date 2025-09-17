@@ -58,17 +58,36 @@ export const characterType = defineType({
       validation: (Rule) => Rule.unique(),
     },
     {
-      name: "profileUrl",
-      title: "Profile URL",
-      type: "url",
-      validation: (Rule) =>
-        Rule.uri({ allowRelative: false, scheme: ["http", "https"] }),
+      name: "skills",
+      title: "Skills",
+      type: "array",
+      of: [{ type: "string" }],
+      options: {
+        layout: "tags",
+      },
+      validation: (Rule) => Rule.unique(),
+    },
+    {
+      name: "talents",
+      title: "Talents",
+      type: "array",
+      of: [{ type: "string" }],
+      options: {
+        layout: "tags",
+      },
+      validation: (Rule) => Rule.unique(),
     },
     {
       name: "twitterHandle",
       title: "Twitter Handle",
       type: "string",
       validation: (Rule) => Rule.max(50),
+    },
+    {
+      name: "pondRefCode",
+      title: "Pond0x Ref Code",
+      type: "string",
+      validation: (Rule) => Rule.max(100),
     },
   ],
 });

@@ -18,13 +18,19 @@ const getFaction = (char) => (char.id === 69 ? "NPC" : char.faction);
 const getPowerLevel = (char) => Math.min(char.level * 10, 1000);
 const getLoreLevel = (char) => 100; // Updated lore level for all characters
 // Pure functional component for the main application
-const DemplarApp = () => {
+const DemplarApp = ({ params }) => {
+  const { character } = React.use(params);
+
   const { notify } = useNotif();
 
   // State management (isolated side effects)
   const { chars, setChars, sel, setSel } = useChar();
   const { favorites, toggleFavorite, isFavorite, removeFavorite } =
     useFavorites();
+
+  const selection = chars.find(
+    (e) => e.name.toLowerCase().replace(/ /g, "-") === character.toLowerCase()
+  );
 
   // Pure computed values (no side effects)
   const statsChars = chars.filter((c) => c.id !== 69);
@@ -51,7 +57,7 @@ const DemplarApp = () => {
 
   return (
     <>
-      {!sel && (
+      {!selection && (
         <div className="space-y-6">
           <div className="bg-white rounded-xl shadow border p-8">
             <div className="text-center">
@@ -74,11 +80,11 @@ const DemplarApp = () => {
         </div>
       )}
 
-      {sel && (
+      {selection && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-white rounded-xl shadow border">
             {(() => {
-              const faction = getFaction(sel);
+              const faction = getFaction(selection);
               const colors = getFactionColors(faction?.name);
 
               return (
@@ -92,21 +98,25 @@ const DemplarApp = () => {
                     <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
                       <div className="flex-shrink-0">
                         <ProfileImage
-                          src={urlFor(sel?.cardImage)
-                            .width(150)
-                            .height(150)
-                            .url()}
-                          alt={sel.name}
+                          src={
+                            selection?.cardImage
+                              ? urlFor(selection?.cardImage)
+                                  ?.width(150)
+                                  ?.height(150)
+                                  ?.url()
+                              : ""
+                          }
+                          alt={selection.name}
                           size="w-24 h-24 sm:w-32 sm:h-32"
                         />
                       </div>
                       <div className="flex-1 text-center sm:text-left">
                         <h3 className="text-3xl sm:text-4xl font-bold mb-3">
-                          {sel.name}
+                          {selection.name}
                         </h3>
                         <div className="flex flex-wrap justify-center sm:justify-start gap-3 mb-4">
                           <div className="bg-yellow-500 text-yellow-900 px-4 py-2 rounded-full font-bold text-lg">
-                            Level {sel.level}
+                            Level {selection.level}
                           </div>
                           <div className="bg-white/20 text-white px-4 py-2 rounded-full font-semibold">
                             {faction?.name}
@@ -119,12 +129,12 @@ const DemplarApp = () => {
                           </div>
                           <div className="space-y-3">
                             <PowerBar
-                              value={getPowerLevel(sel)}
+                              value={getPowerLevel(selection)}
                               faction={faction?.name}
                               className="w-full"
                             />
                             <LoreBar
-                              value={getLoreLevel(sel)}
+                              value={getLoreLevel(selection)}
                               faction={faction?.name}
                               className="w-full"
                             />
@@ -143,7 +153,7 @@ const DemplarApp = () => {
                           Class
                         </div>
                         <div className={`text-lg font-bold text-gray-800`}>
-                          {sel.className}
+                          {selection.className}
                         </div>
                       </div>
                       <div className={`${colors.statBg} rounded-lg p-4`}>
@@ -153,10 +163,10 @@ const DemplarApp = () => {
                           Location
                         </div>
                         <div className={`text-lg font-bold text-gray-800`}>
-                          {sel.location?.name}
+                          {selection.location?.name}
                         </div>
                       </div>
-                      {sel.twitterHandle && (
+                      {selection.twitterHandle && (
                         <div
                           className={`${colors.statBg} rounded-lg p-4 sm:col-span-2`}
                         >
@@ -166,7 +176,7 @@ const DemplarApp = () => {
                             Social Media
                           </div>
                           <a
-                            href={`https://x.com/${sel.twitterHandle.replace(
+                            href={`https://x.com/${selection.twitterHandle.replace(
                               "@",
                               ""
                             )}`}
@@ -174,7 +184,7 @@ const DemplarApp = () => {
                             rel="noopener noreferrer"
                             className={`text-lg font-bold ${colors.textAccent} hover:opacity-80 transition-colors`}
                           >
-                            {sel.twitterHandle}
+                            {selection.twitterHandle}
                           </a>
                         </div>
                       )}
@@ -200,7 +210,7 @@ const DemplarApp = () => {
                               </span>
                             </div>
                             <PowerBar
-                              value={getPowerLevel(sel)}
+                              value={getPowerLevel(selection)}
                               faction={faction?.name}
                               className="w-full"
                             />
@@ -218,7 +228,7 @@ const DemplarApp = () => {
                               </span>
                             </div>
                             <LoreBar
-                              value={getLoreLevel(sel)}
+                              value={getLoreLevel(selection)}
                               faction={faction?.name}
                               className="w-full"
                             />
@@ -239,7 +249,7 @@ const DemplarApp = () => {
                                   Experience Level
                                 </span>
                                 <span className="text-xs font-bold text-slate-800">
-                                  {sel.level}
+                                  {selection.level}
                                 </span>
                               </div>
                               <div className="flex justify-between">
@@ -247,8 +257,9 @@ const DemplarApp = () => {
                                   Power Rank
                                 </span>
                                 <span className="text-xs font-bold text-slate-800">
-                                  {statsChars.filter((c) => c.level > sel.level)
-                                    .length + 1}{" "}
+                                  {statsChars.filter(
+                                    (c) => c.level > selection.level
+                                  ).length + 1}{" "}
                                   of {statsChars.length}
                                 </span>
                               </div>
@@ -265,7 +276,7 @@ const DemplarApp = () => {
                                   Has Profile Image
                                 </span>
                                 <span className="text-xs font-bold text-slate-800">
-                                  {sel.profileUrl ? "Yes" : "No"}
+                                  {selection.profileUrl ? "Yes" : "No"}
                                 </span>
                               </div>
                             </div>
@@ -283,7 +294,7 @@ const DemplarApp = () => {
                                 <span
                                   className={`text-xs font-bold ${colors.textAccent}`}
                                 >
-                                  {Math.min(sel.level * 8, 800)}
+                                  {Math.min(selection.level * 8, 800)}
                                 </span>
                               </div>
                               <div className="flex justify-between">
@@ -293,7 +304,7 @@ const DemplarApp = () => {
                                 <span
                                   className={`text-xs font-bold ${colors.textAccent}`}
                                 >
-                                  {Math.min(sel.level * 2, 200)}
+                                  {Math.min(selection.level * 2, 200)}
                                 </span>
                               </div>
                               <div className="border-t border-slate-200 pt-1 mt-2">
@@ -324,9 +335,9 @@ const DemplarApp = () => {
                         Abilities & Techniques
                       </h4>
                       <div className="bg-white rounded-lg p-4 border border-purple-100">
-                        {sel.skills && sel.skills.length > 0 ? (
+                        {selection.skills && selection.skills.length > 0 ? (
                           <ul className="space-y-2 text-gray-700">
-                            {sel.skills.map((tag, idx) => (
+                            {selection.skills.map((tag, idx) => (
                               <li key={idx}>
                                 {idx + 1}. {tag}
                               </li>
@@ -350,9 +361,9 @@ const DemplarApp = () => {
                         Signature Traits
                       </h4>
                       <div className="bg-white rounded-lg p-4 border border-amber-100">
-                        {sel.talents && sel.talents.length > 0 ? (
+                        {selection.talents && selection.talents.length > 0 ? (
                           <ul className="space-y-2 text-gray-700">
-                            {sel.talents.map((tag, idx) => (
+                            {selection.talents.map((tag, idx) => (
                               <li key={idx}>
                                 {idx + 1}. {tag}
                               </li>
@@ -376,9 +387,9 @@ const DemplarApp = () => {
                         Character Buffs & Abilities
                       </h4>
                       <div className="bg-white rounded-lg p-4 border border-green-100">
-                        {sel.buffs && sel.buffs.length > 0 ? (
+                        {selection.buffs && selection.buffs.length > 0 ? (
                           <ul className="space-y-2 text-gray-700">
-                            {sel.buffs.map((tag, idx) => (
+                            {selection.buffs.map((tag, idx) => (
                               <li key={idx}>
                                 {idx + 1}. {tag}
                               </li>
@@ -402,14 +413,14 @@ const DemplarApp = () => {
                         Pond0x Referral Link
                       </h4>
                       <div className="bg-white rounded-lg p-4 border border-blue-100">
-                        {sel?.pondRefCode ? (
+                        {selection?.pondRefCode ? (
                           <a
-                            href={`https://www.pond0x.com/swap/solana?ref=${sel?.pondRefCode}`}
+                            href={`https://www.pond0x.com/swap/solana?ref=${selection?.pondRefCode}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className={`${colors.textAccent} hover:opacity-80 font-semibold underline transition-opacity`}
                           >
-                            {sel?.name}&apos;s Pond0x Referral Link
+                            {selection?.name}&apos;s Pond0x Referral Link
                           </a>
                         ) : (
                           <span className="text-gray-500 italic">N/A</span>
@@ -424,7 +435,7 @@ const DemplarApp = () => {
 
           <div className="bg-white rounded-xl shadow border p-6">
             {(() => {
-              const faction = getFaction(sel);
+              const faction = getFaction(selection);
               const colors = getFactionColors(faction);
 
               return (
@@ -432,19 +443,19 @@ const DemplarApp = () => {
                   <h4 className="font-bold mb-4 flex items-center justify-between">
                     <span>Quick Actions</span>
                     <button
-                      onClick={() => handleToggleFavorite(sel.id)}
+                      onClick={() => handleToggleFavorite(selection.id)}
                       className={`p-2 rounded ${
-                        isFavorite(sel.id)
+                        isFavorite(selection.id)
                           ? "text-red-500 bg-red-50"
                           : "text-gray-400 bg-gray-50"
                       } hover:text-red-500`}
                     >
-                      {isFavorite(sel.id) ? "❤️" : "🤍"}
+                      {isFavorite(selection.id) ? "❤️" : "🤍"}
                     </button>
                   </h4>
                   <div className="space-y-3">
                     <button
-                      onClick={() => shareCharacter(sel)}
+                      onClick={() => shareCharacter(selection)}
                       className={`w-full px-4 py-2 ${colors.button} text-white rounded hover:opacity-90 flex items-center justify-center space-x-2 transition-all`}
                     >
                       <Share className="w-4 h-4" />
@@ -470,7 +481,7 @@ const DemplarApp = () => {
                             <div
                               className={`bg-gradient-to-r ${colors.powerBar} h-2 rounded-full transition-all duration-500`}
                               style={{
-                                width: `${(getPowerLevel(sel) / 1000) * 100}%`,
+                                width: `${(getPowerLevel(selection) / 1000) * 100}%`,
                               }}
                             ></div>
                           </div>
@@ -488,7 +499,7 @@ const DemplarApp = () => {
                             <div
                               className={`bg-gradient-to-r ${colors.loreBar} h-2 rounded-full transition-all duration-500`}
                               style={{
-                                width: `${(getLoreLevel(sel) / 1000) * 100}%`,
+                                width: `${(getLoreLevel(selection) / 1000) * 100}%`,
                               }}
                             ></div>
                           </div>

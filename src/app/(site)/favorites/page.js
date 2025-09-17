@@ -5,6 +5,8 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { useNotif } from "@/providers/NotifProvider";
 import { useChar } from "@/providers/CharProvider";
 import clsx from "clsx";
+import { urlFor } from "@/sanity/lib/image";
+import Image from "next/image";
 
 const DemplarApp = () => {
   const { chars, setChars, sel, setSel } = useChar();
@@ -50,25 +52,35 @@ const DemplarApp = () => {
                   <div key={char._id} className="relative group">
                     <Link
                       onClick={() => {
-                        setSel(char);
+                        // setSel(char);
                         notify(`Viewing ${char.name}! ⚔️`);
                       }}
-                      href="profile"
+                      href={`/characters/${char.name.toLowerCase().replace(/ /g, "-")}`}
                       className="inline-block w-full aspect-square rounded-xl overflow-hidden border-2 border-gray-200 hover:border-red-400 transition-all hover:shadow-lg"
                     >
                       <div className="relative w-full h-full bg-gradient-to-br from-gray-100 to-gray-200">
-                        {char.profileUrl ? (
+                        {char?.cardImage ? (
                           // Update to next Image component
                           <img
-                            src={char.profileUrl}
-                            alt={char.name}
+                            src={
+                              char?.cardImage
+                                ? urlFor(char?.cardImage)
+                                    .width(250)
+                                    .height(250)
+                                    .url()
+                                : ""
+                            }
+                            alt={char.name || ""}
+                            fill
                             className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.target.style.display = "none";
-                              e.target.nextSibling.style.display = "flex";
-                            }}
+                            // onError={(e) => {
+                            //   e.target.style.display = "none";
+                            //   e.target.nextSibling.style.display = "flex";
+                            // }}
                           />
-                        ) : null}
+                        ) : (
+                          "test"
+                        )}
                         <div
                           className={clsx(
                             `

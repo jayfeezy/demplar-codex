@@ -68,7 +68,7 @@ const Body = ({ children }) => {
               "home",
               "characters",
               "favorites",
-              "profile",
+              // "profile",
               "stats",
               "compare",
               "news",
@@ -92,7 +92,7 @@ const Body = ({ children }) => {
                 return (
                   <Link
                     key={t}
-                    href={t === "home" ? "/" : t}
+                    href={t === "home" ? "/" : `/${t}`}
                     className={clsx(
                       `py-4 px-4 sm:px-6 border-b-2 font-medium capitalize flex items-center space-x-2 whitespace-nowrap min-w-max touch-manipulation transition-colors duration-300`,
                       darkMode
@@ -236,7 +236,7 @@ const Header = () => {
                       `Viewing today's spotlight: ${characterOfDay.name} ⭐`
                     );
                   }}
-                  href="profile"
+                  href={`/characters/${characterOfDay?.name.toLowerCase().replace(/ /g, "-")}`}
                   className="group hover:scale-105 transition-transform"
                 >
                   <div className="flex flex-col items-center space-y-2">

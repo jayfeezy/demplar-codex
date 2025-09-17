@@ -13,7 +13,10 @@ export async function getCharacters() {
       location->{_id, name},
       buffs,
       profileUrl,
-      twitterHandle
+      twitterHandle,
+      skills,
+      talents,
+      pondRefCode
     }`
   );
 }
