@@ -11,6 +11,7 @@ import { useNotif } from "@/providers/NotifProvider";
 import { useChar } from "@/providers/CharProvider";
 import clsx from "clsx";
 import { urlFor } from "@/sanity/lib/image";
+import { slugify } from "@/utils/slugify";
 // need to clsx this page still
 
 // Pure functions for character data transformation
@@ -29,7 +30,7 @@ const DemplarApp = ({ params }) => {
     useFavorites();
 
   const selection = chars.find(
-    (e) => e.name.toLowerCase().replace(/ /g, "-") === character.toLowerCase()
+    (e) => slugify(e.name) === character.toLowerCase()
   );
 
   // Pure computed values (no side effects)
@@ -44,7 +45,7 @@ const DemplarApp = ({ params }) => {
   };
 
   const shareCharacter = (char) => {
-    const url = `${window.location.origin}/?char=${char.id}`;
+    const url = `${window.location}`;
     const text = `Check out ${char.name} - Level ${char.level} ${char.className} from Demplar! ⚔️`;
 
     if (navigator.share) {
@@ -271,14 +272,6 @@ const DemplarApp = ({ params }) => {
                                   {faction?.name}
                                 </span>
                               </div>
-                              <div className="flex justify-between">
-                                <span className="text-xs text-slate-600">
-                                  Has Profile Image
-                                </span>
-                                <span className="text-xs font-bold text-slate-800">
-                                  {selection.profileUrl ? "Yes" : "No"}
-                                </span>
-                              </div>
                             </div>
                           </div>
 
@@ -337,9 +330,9 @@ const DemplarApp = ({ params }) => {
                       <div className="bg-white rounded-lg p-4 border border-purple-100">
                         {selection.skills && selection.skills.length > 0 ? (
                           <ul className="space-y-2 text-gray-700">
-                            {selection.skills.map((tag, idx) => (
-                              <li key={idx}>
-                                {idx + 1}. {tag}
+                            {selection.skills.map((skill, idx) => (
+                              <li key={skill._id}>
+                                {idx + 1}. {skill.name}
                               </li>
                             ))}
                           </ul>
@@ -363,9 +356,9 @@ const DemplarApp = ({ params }) => {
                       <div className="bg-white rounded-lg p-4 border border-amber-100">
                         {selection.talents && selection.talents.length > 0 ? (
                           <ul className="space-y-2 text-gray-700">
-                            {selection.talents.map((tag, idx) => (
-                              <li key={idx}>
-                                {idx + 1}. {tag}
+                            {selection.talents.map((talent, idx) => (
+                              <li key={talent._id}>
+                                {idx + 1}. {talent.name}
                               </li>
                             ))}
                           </ul>
@@ -443,14 +436,14 @@ const DemplarApp = ({ params }) => {
                   <h4 className="font-bold mb-4 flex items-center justify-between">
                     <span>Quick Actions</span>
                     <button
-                      onClick={() => handleToggleFavorite(selection.id)}
+                      onClick={() => handleToggleFavorite(selection._id)}
                       className={`p-2 rounded ${
-                        isFavorite(selection.id)
+                        isFavorite(selection._id)
                           ? "text-red-500 bg-red-50"
                           : "text-gray-400 bg-gray-50"
                       } hover:text-red-500`}
                     >
-                      {isFavorite(selection.id) ? "❤️" : "🤍"}
+                      {isFavorite(selection._id) ? "❤️" : "🤍"}
                     </button>
                   </h4>
                   <div className="space-y-3">
@@ -508,16 +501,17 @@ const DemplarApp = ({ params }) => {
                     </div>
 
                     <div className="mt-6 pt-4 border-t border-gray-200">
-                      <button
+                      <Link
                         onClick={() => {
-                          setSel(null);
+                          // setSel(null);
                           notify("Returned to character selection 🔙");
                         }}
+                        href="/characters"
                         className={`w-full ${colors.button} text-white px-6 py-3 rounded-lg hover:opacity-90 font-semibold transition-all flex items-center justify-center space-x-2`}
                       >
                         <span>←</span>
                         <span>Back to Character Selection</span>
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </>

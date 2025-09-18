@@ -7,6 +7,7 @@ import { useChar } from "@/providers/CharProvider";
 import clsx from "clsx";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
+import { slugify } from "@/utils/slugify";
 
 const DemplarApp = () => {
   const { chars, setChars, sel, setSel } = useChar();
@@ -55,7 +56,7 @@ const DemplarApp = () => {
                         // setSel(char);
                         notify(`Viewing ${char.name}! ⚔️`);
                       }}
-                      href={`/characters/${char.name.toLowerCase().replace(/ /g, "-")}`}
+                      href={`/characters/${slugify(char.name)}`}
                       className="inline-block w-full aspect-square rounded-xl overflow-hidden border-2 border-gray-200 hover:border-red-400 transition-all hover:shadow-lg"
                     >
                       <div className="relative w-full h-full bg-gradient-to-br from-gray-100 to-gray-200">

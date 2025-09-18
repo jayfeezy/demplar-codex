@@ -61,20 +61,24 @@ export const characterType = defineType({
       name: "skills",
       title: "Skills",
       type: "array",
-      of: [{ type: "string" }],
-      options: {
-        layout: "tags",
-      },
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "skill" }],
+        },
+      ],
       validation: (Rule) => Rule.unique(),
     },
     {
       name: "talents",
       title: "Talents",
       type: "array",
-      of: [{ type: "string" }],
-      options: {
-        layout: "tags",
-      },
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "talent" }],
+        },
+      ],
       validation: (Rule) => Rule.unique(),
     },
     {

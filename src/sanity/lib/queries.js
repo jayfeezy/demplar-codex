@@ -14,8 +14,8 @@ export async function getCharacters() {
       buffs,
       profileUrl,
       twitterHandle,
-      skills,
-      talents,
+      skills[]->{_id,name},
+      talents[]->{_id,name},
       pondRefCode
     }`
   );

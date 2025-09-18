@@ -29,6 +29,8 @@ import { ProfileImage } from "@/components/ProfileImage";
 
 // import SupabaseProvider from "@/providers/AuthProvider";
 import clsx from "clsx";
+import { slugify } from "@/utils/slugify";
+import { urlFor } from "@/sanity/lib/image";
 
 export default function RootLayout({ children }) {
   return (
@@ -236,12 +238,19 @@ const Header = () => {
                       `Viewing today's spotlight: ${characterOfDay.name} ⭐`
                     );
                   }}
-                  href={`/characters/${characterOfDay?.name.toLowerCase().replace(/ /g, "-")}`}
+                  href={`/characters/${slugify(characterOfDay?.name)}`}
                   className="group hover:scale-105 transition-transform"
                 >
                   <div className="flex flex-col items-center space-y-2">
                     <ProfileImage
-                      src={characterOfDay?.profileUrl || ""}
+                      src={
+                        characterOfDay?.cardImage
+                          ? urlFor(characterOfDay?.cardImage)
+                              ?.width(150)
+                              ?.height(150)
+                              ?.url()
+                          : ""
+                      }
                       alt={characterOfDay?.name}
                       size="w-16 h-16"
                     />

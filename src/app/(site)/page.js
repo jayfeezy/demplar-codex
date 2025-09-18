@@ -8,6 +8,7 @@ import { useDark } from "@/providers/DarkProvider";
 import { getCharacters } from "@/sanity/lib/queries";
 import clsx from "clsx";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { slugify } from "@/utils/slugify";
 
 const DemplarApp = () => {
   const { notify } = useNotif();
@@ -109,7 +110,7 @@ const DemplarApp = () => {
                       setSel(char);
                       notify(`Viewing ${char.name}! ⚔️`);
                     }}
-                    href={`/characters/${char.name.toLowerCase().replace(/ /g, "-")}`}
+                    href={`/characters/${slugify(char.name)}`}
                     className="w-full flex items-center justify-between p-3 bg-white rounded-lg hover:bg-yellow-50 transition-colors group"
                   >
                     <div className="flex items-center space-x-3">
@@ -206,7 +207,7 @@ const DemplarApp = () => {
                             setSel(char);
                             notify(`Viewing ${char.name}! ⚔️`);
                           }}
-                          href={`/characters/${char.name.toLowerCase().replace(/ /g, "-")}`}
+                          href={`/characters/${slugify(char.name)}`}
                           className={clsx(
                             `w-full flex items-center justify-between p-2 bg-white rounded hover:shadow-md transition-all group`,
                             colors.hover
@@ -258,7 +259,7 @@ const DemplarApp = () => {
             // setSel(randomChar);
             notify(`Surprise! Viewing ${randomChar.name} 🎲`);
           }}
-          href={`/characters/${characters[Math.floor(Math.random() * characters.length)].name.toLowerCase().replace(/ /g, "-")}`}
+          href={`/characters/${slugify(characters[Math.floor(Math.random() * characters.length)].name)}`}
           className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 hover:border-blue-400 rounded-xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group"
         >
           <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-300">

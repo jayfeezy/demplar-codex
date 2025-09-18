@@ -5,6 +5,7 @@ import { Shield, Eye, Download } from "lucide-react";
 import { ProfileImage } from "@/components/ProfileImage";
 import { useNotif } from "@/providers/NotifProvider";
 import { useChar } from "@/providers/CharProvider";
+import { slugify } from "@/utils/slugify";
 
 // Pure functional component for the main application
 const DemplarApp = () => {
@@ -74,7 +75,7 @@ const DemplarApp = () => {
                         setSel(c);
                         notify(`Viewing ${c.name} ⚔️`);
                       }}
-                      href={`/characters/${c.name.toLowerCase().replace(/ /g, "-")}`}
+                      href={`/characters/${slugify(c.name)}`}
                       className="px-3 py-2 rounded text-sm bg-blue-500 hover:bg-blue-600 text-white"
                     >
                       <Eye className="w-4 h-4" />
@@ -249,7 +250,7 @@ const DemplarApp = () => {
                             setSel(c);
                             notify(`Viewing ${c.name} ⚔️`);
                           }}
-                          href={`/characters/${c.name.toLowerCase().replace(/ /g, "-")}`}
+                          href={`/characters/${slugify(c.name)}`}
                           className="px-2 py-1 rounded text-xs bg-blue-500 hover:bg-blue-600 text-white"
                         >
                           <Eye className="w-3 h-3" />

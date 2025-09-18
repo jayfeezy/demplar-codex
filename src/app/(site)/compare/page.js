@@ -7,6 +7,7 @@ import { useNotif } from "@/providers/NotifProvider";
 import { useChar } from "@/providers/CharProvider";
 import clsx from "clsx";
 import { useFavorites } from "@/hooks/useFavorites";
+import { slugify } from "@/utils/slugify";
 
 // Pure functions for character data transformation
 const getFaction = (char) => (char._id === 69 ? "NPC" : char.faction.name);
@@ -316,7 +317,7 @@ const DemplarApp = () => {
                       {/* Action Buttons */}
                       <div className="pt-2 space-y-2">
                         <Link
-                          href={`/characters/${char.name.toLowerCase().replace(/ /g, "-")}`}
+                          href={`/characters/${slugify(char.name)}`}
                           onClick={() => {
                             setSel(char);
                             notify(`Viewing ${char.name}! ⚔️`);

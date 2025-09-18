@@ -11,6 +11,7 @@ import { useChar } from "@/providers/CharProvider";
 import { useNotif } from "@/providers/NotifProvider";
 import clsx from "clsx";
 import { urlFor } from "@/sanity/lib/image";
+import { slugify } from "@/utils/slugify";
 
 const getFaction = (char) => (char._id === 69 ? "NPC" : char.faction);
 const getPowerLevel = (char) => Math.min(char.level * 10, 1000);
@@ -167,11 +168,15 @@ const DemplarApp = () => {
                         setSearch("");
                         notify(`Viewing ${c.name}'s profile! ⚔️`);
                       }}
-                      href={`/characters/${c.name.toLowerCase()}`}
+                      href={`/characters/${slugify(c.name)}`}
                       className="flex items-center space-x-3 flex-1"
                     >
                       <ProfileImage
-                        src={urlFor(o?.cardImage).width(150).height(150).url()}
+                        src={
+                          c?.cardImage
+                            ? urlFor(c?.cardImage).width(150).height(150).url()
+                            : ""
+                        }
                         alt={c.name}
                         size="w-8 h-8 sm:w-10 sm:h-10"
                       />
@@ -398,7 +403,7 @@ const DemplarApp = () => {
                           notify(`Viewing ${char.name}! ⚔️`);
                         }}
                         // href="profile"
-                        href={`/characters/${char.name.toLowerCase().replace(/ /g, "-")}`}
+                        href={`/characters/${slugify(char.name)}`}
                         className={clsx(
                           `flex-1 text-white px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg`,
                           colors.button
