@@ -1,11 +1,11 @@
 "use client";
-import React, { useState } from "react";
-import { characters } from "@/lib/characters";
+import React from "react";
 import clsx from "clsx";
+import { useChar } from "@/providers/CharProvider";
 
 // Pure functional component for the main application
 const DemplarApp = () => {
-  const [chars, setChars] = useState(characters);
+  const { chars } = useChar();
 
   // Pure computed values (no side effects)
   const statsChars = chars.filter((c) => c.id !== 69);
@@ -24,7 +24,7 @@ const DemplarApp = () => {
         <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
           Overall Database Statistics
         </h3>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           <div className="text-center p-3 sm:p-6 bg-blue-50 rounded-xl">
             <div className="text-2xl sm:text-3xl font-bold text-blue-600">
               {stats.total}
@@ -49,14 +49,14 @@ const DemplarApp = () => {
               Highest Level
             </div>
           </div>
-          <div className="text-center p-3 sm:p-6 bg-purple-50 rounded-xl">
+          {/* <div className="text-center p-3 sm:p-6 bg-purple-50 rounded-xl">
             <div className="text-2xl sm:text-3xl font-bold text-purple-600">
               {stats.imgs}
             </div>
             <div className="text-xs sm:text-sm text-purple-700">
               With Images
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -71,10 +71,10 @@ const DemplarApp = () => {
 
             // Filter out NPC/Unknown characters and group by faction
             chars
-              .filter((c) => c.id !== 69 && c.faction !== "NPC")
+              .filter((c) => c.id !== 69 && c?.faction?.name !== "NPC")
               .forEach((char) => {
-                if (!factionStats[char.faction]) {
-                  factionStats[char.faction] = {
+                if (!factionStats[char?.faction?.name]) {
+                  factionStats[char?.faction?.name] = {
                     characters: [],
                     totalLevel: 0,
                     count: 0,
@@ -82,15 +82,16 @@ const DemplarApp = () => {
                   };
                 }
 
-                factionStats[char.faction].characters.push(char);
-                factionStats[char.faction].totalLevel += char.level;
-                factionStats[char.faction].count++;
+                factionStats[char?.faction?.name].characters.push(char);
+                factionStats[char?.faction?.name].totalLevel += char.level;
+                factionStats[char?.faction?.name].count++;
 
                 if (
-                  !factionStats[char.faction].highestChar ||
-                  char.level > factionStats[char.faction].highestChar.level
+                  !factionStats[char?.faction?.name].highestChar ||
+                  char.level >
+                    factionStats[char?.faction?.name].highestChar.level
                 ) {
-                  factionStats[char.faction].highestChar = char;
+                  factionStats[char?.faction?.name].highestChar = char;
                 }
               });
 

@@ -370,7 +370,7 @@ const DemplarApp = ({ params }) => {
                       </div>
                     </div>
 
-                    <div
+                    {/*<div
                       className={`bg-gradient-to-r ${colors.profileBg} border ${colors.borderAccent} rounded-lg p-6`}
                     >
                       <h4
@@ -394,7 +394,7 @@ const DemplarApp = ({ params }) => {
                           </span>
                         )}
                       </div>
-                    </div>
+                    </div> */}
 
                     <div
                       className={`bg-gradient-to-r ${colors.profileBg} border ${colors.borderAccent} rounded-lg p-6`}
