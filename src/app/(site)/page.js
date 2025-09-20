@@ -5,15 +5,16 @@ import { characters } from "@/lib/characters";
 import { useNotif } from "@/providers/NotifProvider";
 import { useChar } from "@/providers/CharProvider";
 import { useDark } from "@/providers/DarkProvider";
-import { getCharacters } from "@/sanity/lib/queries";
 import clsx from "clsx";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { slugify } from "@/utils/slugify";
+import { useRouter } from "next/navigation";
 
 const DemplarApp = () => {
   const { notify } = useNotif();
   const { chars, setSel } = useChar();
   const { darkMode } = useDark();
+  const router = useRouter();
 
   // Pure computed values (no side effects)
   const statsChars = chars.filter((c) => c._id !== 69);
@@ -253,13 +254,14 @@ const DemplarApp = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         <Link
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             const randomChar =
               characters[Math.floor(Math.random() * characters.length)];
-            // setSel(randomChar);
             notify(`Surprise! Viewing ${randomChar.name} 🎲`);
+            router.push(`/characters/${slugify(randomChar.name)}`);
           }}
-          href={`/characters/${slugify(characters[Math.floor(Math.random() * characters.length)].name)}`}
+          href="#"
           className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 hover:border-blue-400 rounded-xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group"
         >
           <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-300">

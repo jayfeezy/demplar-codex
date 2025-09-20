@@ -154,14 +154,14 @@ const Header = () => {
   const characterOfDay = getCharacterOfDay();
   return (
     <header
-      className={`shadow-xl transition-colors duration-300 ${
+      className={`relative shadow-xl transition-colors duration-300 bg-[url('https://res.cloudinary.com/dpr7n8ycn/image/upload/v1758333610/demplar-book-banner_btfgyl.webp')] bg-center bg-cover after:content-[''] after:absolute after:inset-0 after:bg-black/65 ${
         darkMode
           ? "bg-gradient-to-r from-gray-800 to-gray-900 text-white"
           : "bg-gradient-to-r from-purple-900 to-purple-800 text-white"
       }`}
     >
       <div
-        className={`px-4 py-3 border-b transition-colors duration-300 ${
+        className={`relative z-3 px-4 py-3 border-b transition-colors duration-300 ${
           darkMode
             ? "bg-gray-900/90 border-gray-700"
             : "bg-slate-800/90 border-slate-700"
@@ -219,14 +219,14 @@ const Header = () => {
         </div>
       </div>
 
-      <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-7xl mx-auto">
+      <div className="relative px-4 sm:px-6 py-6 sm:py-8 max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 space-y-6 sm:space-y-0">
-          <div className="text-4xl sm:text-6xl font-bold text-yellow-400">
+          <div className="text-4xl sm:text-6xl font-bold text-yellow-400 relative z-10">
             DEMPLAR
           </div>
 
           {pathname !== "characters" && (
-            <div className="bg-yellow-600/20 border-2 border-yellow-600/40 rounded-xl p-4 max-w-sm">
+            <div className="bg-yellow-600/20 border-2 border-yellow-600/40 rounded-xl p-4 max-w-sm z-10">
               <div className="text-center">
                 <div className="text-yellow-300 text-sm font-bold mb-2">
                   🌟 CHARACTER OF THE DAY

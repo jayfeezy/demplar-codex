@@ -188,7 +188,7 @@ const DemplarApp = () => {
                           Level {c.level} • {c.className}
                         </div>
                       </div>
-                      <div className="text-xs text-gray-400">#{c._id}</div>
+                      {/* <div className="text-xs text-gray-400">#{c._id}</div> */}
                     </Link>
                     <div className="flex space-x-1">
                       <button

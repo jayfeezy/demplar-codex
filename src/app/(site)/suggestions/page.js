@@ -49,7 +49,6 @@ ${customMessage.trim() || "[Please add your message here]"}
 Details:
 - Date: ${new Date().toLocaleDateString()}
 - Time: ${new Date().toLocaleTimeString()}
-- User Role: ${user?.role || "Unknown"}
 
 Thank you!`;
 
