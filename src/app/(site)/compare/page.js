@@ -8,6 +8,7 @@ import { useChar } from "@/providers/CharProvider";
 import clsx from "clsx";
 import { useFavorites } from "@/hooks/useFavorites";
 import { slugify } from "@/utils/slugify";
+import { urlFor } from "@/sanity/lib/image";
 
 // Pure functions for character data transformation
 const getFaction = (char) => (char._id === 69 ? "NPC" : char.faction.name);
@@ -124,7 +125,14 @@ const DemplarApp = () => {
                     >
                       <div className="flex flex-col items-center text-center">
                         <ProfileImage
-                          src={char.profileUrl}
+                          src={
+                            char?.cardImage
+                              ? urlFor(char?.cardImage)
+                                  .width(150)
+                                  .height(150)
+                                  .url()
+                              : ""
+                          }
                           alt={char.name}
                           size="w-20 h-20"
                         />
