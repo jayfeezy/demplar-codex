@@ -8,6 +8,7 @@ import { useChar } from "@/providers/CharProvider";
 import clsx from "clsx";
 import { useFavorites } from "@/hooks/useFavorites";
 import { slugify } from "@/utils/slugify";
+import { urlFor } from "@/sanity/lib/image";
 
 // Pure functions for character data transformation
 const getFaction = (char) => (char._id === 69 ? "NPC" : char.faction.name);
@@ -124,7 +125,14 @@ const DemplarApp = () => {
                     >
                       <div className="flex flex-col items-center text-center">
                         <ProfileImage
-                          src={char.profileUrl}
+                          src={
+                            char?.cardImage
+                              ? urlFor(char?.cardImage)
+                                  .width(150)
+                                  .height(150)
+                                  .url()
+                              : ""
+                          }
                           alt={char.name}
                           size="w-20 h-20"
                         />
@@ -134,7 +142,7 @@ const DemplarApp = () => {
                             Level {char.level}
                           </span>
                           <span className="bg-white/20 text-white px-3 py-1 rounded-full font-semibold text-sm">
-                            {faction.name}
+                            {char?.faction?.name}
                           </span>
                         </div>
                       </div>
@@ -262,7 +270,7 @@ const DemplarApp = () => {
                               #
                               {statsChars.filter(
                                 (c) =>
-                                  c.faction.name === char.faction.name &&
+                                  c?.faction?.name === char?.faction?.name &&
                                   c.level > char.level
                               ).length + 1}{" "}
                               in {faction.name}
@@ -272,7 +280,7 @@ const DemplarApp = () => {
                       </div>
 
                       {/* Buffs */}
-                      <div className="bg-white/70 rounded-lg p-3 border border-gray-200">
+                      {/* <div className="bg-white/70 rounded-lg p-3 border border-gray-200">
                         <div
                           className={clsx(
                             `text-xs font-medium uppercase tracking-wide mb-2`,
@@ -284,7 +292,7 @@ const DemplarApp = () => {
                         <p className="text-xs text-gray-700 leading-relaxed">
                           {char.buffs}
                         </p>
-                      </div>
+                      </div> */}
 
                       {/* Social */}
                       {char.twitterHandle && (
