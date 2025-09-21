@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { characters } from "@/lib/characters";
 import { useNotif } from "@/providers/NotifProvider";
@@ -9,12 +9,19 @@ import clsx from "clsx";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { slugify } from "@/utils/slugify";
 import { useRouter } from "next/navigation";
+import { useMeta } from "@/providers/MetaContext";
 
 const DemplarApp = () => {
   const { notify } = useNotif();
   const { chars, setSel } = useChar();
   const { darkMode } = useDark();
   const router = useRouter();
+  const { setTitle, setDescription } = useMeta();
+
+  useEffect(() => {
+    setTitle("Home");
+    //setDescription("Knights Demplar");
+  }, [setTitle, setDescription]);
 
   // Pure computed values (no side effects)
   const statsChars = chars.filter((c) => c._id !== 69);

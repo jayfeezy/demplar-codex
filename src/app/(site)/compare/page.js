@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ProfileImage } from "@/components/ProfileImage";
 import { getFactionColors } from "@/utils/getFactionColors";
@@ -9,6 +9,7 @@ import clsx from "clsx";
 import { useFavorites } from "@/hooks/useFavorites";
 import { slugify } from "@/utils/slugify";
 import { urlFor } from "@/sanity/lib/image";
+import { useMeta } from "@/providers/MetaContext";
 
 // Pure functions for character data transformation
 const getFaction = (char) => (char._id === 69 ? "NPC" : char.faction.name);
@@ -18,12 +19,15 @@ const getLoreLevel = (char) => 100; // Updated lore level for all characters
 // Pure functional component for the main application
 const DemplarApp = () => {
   const { notify } = useNotif();
-
   const { chars, setChars, sel, setSel, compChar, setCompChar } = useChar();
   const { toggleFavorite, isFavorite } = useFavorites();
-
-  // Pure computed values (no side effects)
   const statsChars = chars.filter((c) => c._id !== 69);
+  const { setTitle, setDescription } = useMeta();
+
+  useEffect(() => {
+    setTitle("Compare");
+    //setDescription("Knights Demplar");
+  }, [setTitle, setDescription]);
 
   // Event handlers (side effects isolated)
   const handleToggleFavorite = (charId) => {

@@ -1,7 +1,7 @@
 "use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Eye, LogOut, Settings, Shield, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -19,6 +19,8 @@ const geistMono = Geist_Mono({
 import { CharProvider, useChar } from "@/providers/CharProvider";
 import { DarkProvider, useDark } from "@/providers/DarkProvider";
 import { NotifProvider, useNotif } from "@/providers/NotifProvider";
+import { MetaProvider } from "@/providers/MetaContext";
+
 import { ProfileImage } from "@/components/ProfileImage";
 // import { useSupabase } from "@/providers/AuthProvider";
 
@@ -32,20 +34,28 @@ import clsx from "clsx";
 import { slugify } from "@/utils/slugify";
 import { urlFor } from "@/sanity/lib/image";
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, pageTitle = "Home" }) {
+  const siteName = "Knights Demplar Codex";
+
+  useEffect(() => {
+    document.title = pageTitle ? `${pageTitle} – ${siteName}` : siteName;
+  }, [pageTitle]);
+
   return (
     <html lang="en">
       {/* <SupabaseProvider initialSession={null}> */}
-      <DarkProvider>
-        <NotifProvider>
-          <CharProvider>
-            <Body>
-              {children}
-              <SpeedInsights />
-            </Body>
-          </CharProvider>
-        </NotifProvider>
-      </DarkProvider>
+      <MetaProvider>
+        <DarkProvider>
+          <NotifProvider>
+            <CharProvider>
+              <Body>
+                {children}
+                <SpeedInsights />
+              </Body>
+            </CharProvider>
+          </NotifProvider>
+        </DarkProvider>
+      </MetaProvider>
       {/* </SupabaseProvider> */}
     </html>
   );

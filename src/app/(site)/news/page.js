@@ -4,10 +4,17 @@ import { NewsArticle } from "@/components/NewsArticle";
 import { useNotif } from "@/providers/NotifProvider";
 import { getNews } from "@/sanity/lib/queries";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { useMeta } from "@/providers/MetaContext";
 
 const DemplarApp = () => {
   const [loading, setLoading] = useState(true);
   const [news, setNews] = useState([]);
+  const { setTitle, setDescription } = useMeta();
+
+  useEffect(() => {
+    setTitle("News");
+    //setDescription("Knights Demplar");
+  }, [setTitle, setDescription]);
 
   useEffect(() => {
     const fetchNews = async () => {

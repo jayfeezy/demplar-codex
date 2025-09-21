@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Search } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -12,6 +12,7 @@ import { useNotif } from "@/providers/NotifProvider";
 import clsx from "clsx";
 import { urlFor } from "@/sanity/lib/image";
 import { slugify } from "@/utils/slugify";
+import { useMeta } from "@/providers/MetaContext";
 
 const getFaction = (char) => (char._id === 69 ? "NPC" : char.faction);
 const getPowerLevel = (char) => Math.min(char.level * 10, 1000);
@@ -26,6 +27,12 @@ const DemplarApp = () => {
   const { toggleFavorite, isFavorite } = useFavorites();
   const [compareMode, setCompareMode] = useState(false);
   const { notify } = useNotif();
+  const { setTitle, setDescription } = useMeta();
+
+  useEffect(() => {
+    setTitle("Characters");
+    //setDescription("Knights Demplar");
+  }, [setTitle, setDescription]);
 
   // Pure function for filtering characters
   const getFilteredChars = () => {

@@ -1,7 +1,8 @@
 "use client";
+import { useMeta } from "@/providers/MetaContext";
 import { useNotif } from "@/providers/NotifProvider";
 import clsx from "clsx";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // Pure functional component for the main application
 const DemplarApp = () => {
   // State management (isolated side effects)
@@ -9,6 +10,12 @@ const DemplarApp = () => {
   const [customSubject, setCustomSubject] = useState("");
   const [customMessage, setCustomMessage] = useState("");
   const { notify } = useNotif();
+  const { setTitle, setDescription } = useMeta();
+
+  useEffect(() => {
+    setTitle("Suggestions");
+    //setDescription("Knights Demplar");
+  }, [setTitle, setDescription]);
 
   const sendEmail = (subject, body) => {
     const emailAddress = "your@email.com";
