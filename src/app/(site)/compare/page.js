@@ -262,7 +262,7 @@ const DemplarApp = () => {
                               #
                               {statsChars.filter(
                                 (c) =>
-                                  c.faction.name === char.faction.name &&
+                                  c?.faction?.name === char?.faction?.name &&
                                   c.level > char.level
                               ).length + 1}{" "}
                               in {faction.name}
