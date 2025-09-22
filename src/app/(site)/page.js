@@ -39,16 +39,16 @@ const DemplarApp = () => {
       <div
         className={clsx(
           `rounded-xl shadow-xl p-8 sm:p-12 transition-colors duration-300`,
-          darkMode
-            ? "bg-gradient-to-br from-gray-800 to-gray-900 text-white"
-            : "bg-gradient-to-br from-purple-900 to-purple-800 text-white"
+          "bg-gradient-to-br from-purple-900 to-purple-800 text-white",
+          "dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 dark:text-white"
         )}
       >
         <div className="text-center">
           <div
             className={clsx(
               `text-2xl sm:text-3xl font-bold mb-3 transition-colors duration-300`,
-              darkMode ? "text-gray-300" : "text-purple-200"
+              "text-purple-200",
+              "dark:text-gray-300"
             )}
           >
             Welcome to
@@ -59,7 +59,8 @@ const DemplarApp = () => {
           <p
             className={clsx(
               `text-2xl sm:text-3xl font-bold tracking-wide mb-8 transition-colors duration-300`,
-              darkMode ? "text-gray-100" : "text-purple-100"
+              "text-purple-100",
+              "dark:text-gray-100"
             )}
           >
             Home of the legendary Demplarverse
@@ -89,8 +90,18 @@ const DemplarApp = () => {
         </div>
       </div>
       {/* Leaderboard Preview Section */}
-      <div className="bg-white rounded-xl shadow-xl border p-6 sm:p-8">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6 flex items-center text-gray-800">
+      <div
+        className={clsx(
+          "bg-white rounded-xl shadow-xl border p-6 sm:p-8",
+          "dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900"
+        )}
+      >
+        <h2
+          className={clsx(
+            "text-2xl sm:text-3xl font-bold mb-6 flex items-center text-gray-800",
+            "dark:text-white"
+          )}
+        >
           <span className="mr-3">🏆</span>
           Leaderboard Highlights
         </h2>
@@ -252,7 +263,7 @@ const DemplarApp = () => {
         <div className="mt-6 text-center">
           <Link
             href="characters"
-            className="text-sm text-gray-600 hover:text-gray-800 transition-colors"
+            className="text-sm text-gray-600 hover:text-gray-800 transition-colors dark:text-white"
           >
             View Full Character Rankings →
           </Link>

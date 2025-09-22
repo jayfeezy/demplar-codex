@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Search } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -13,6 +13,7 @@ import clsx from "clsx";
 import { urlFor } from "@/sanity/lib/image";
 import { slugify } from "@/utils/slugify";
 import { useMeta } from "@/providers/MetaContext";
+import ReactPaginate from "react-paginate";
 
 const getFaction = (char) => (char._id === 69 ? "NPC" : char.faction);
 const getPowerLevel = (char) => Math.min(char.level * 10, 1000);
@@ -21,18 +22,32 @@ const getLoreLevel = (char) => 100;
 const DemplarApp = () => {
   const { chars, setChars, sel, setSel, compChar, setCompChar } = useChar();
   const [search, setSearch] = useState("");
-  const [show, setShow] = useState(false);
+  // const [show, setShow] = useState(false);
   const [levelFilter, setLevelFilter] = useState("all");
   const [factionFilter, setFactionFilter] = useState("all");
-  const { toggleFavorite, isFavorite } = useFavorites();
+  const { favorites, toggleFavorite, isFavorite } = useFavorites();
   const [compareMode, setCompareMode] = useState(false);
   const { notify } = useNotif();
   const { setTitle, setDescription } = useMeta();
+  const [filtered, setFiltered] = useState([]);
+  const [currentItems, setCurrentItems] = useState(filtered.slice(0, 10));
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 12;
 
   useEffect(() => {
     setTitle("Characters");
     //setDescription("Knights Demplar");
   }, [setTitle, setDescription]);
+
+  useEffect(() => {
+    setFiltered(getFilteredChars(chars));
+    setCurrentPage(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chars, search, levelFilter, factionFilter, favorites]);
+
+  // useEffect(() => {
+  //   search.length > 3 ? setShow(true) : setShow(false);
+  // }, [search]);
 
   // Pure function for filtering characters
   const getFilteredChars = () => {
@@ -57,7 +72,7 @@ const DemplarApp = () => {
           c.level <= levelRanges[levelFilter][1]);
 
       const matchesFaction =
-        factionFilter === "all" || c.faction === factionFilter;
+        factionFilter === "all" || c?.faction?.name === factionFilter;
 
       return matchesSearch && matchesLevel && matchesFaction;
     });
@@ -66,14 +81,27 @@ const DemplarApp = () => {
       const aFav = isFavorite(a._id);
       const bFav = isFavorite(b._id);
       if (aFav !== bFav) return bFav - aFav;
-      if (a.level !== b.level) return b.level - a.level;
+      // if (a.level !== b.level) return b.level - a.level;
       return a.name.localeCompare(b.name);
     });
-
     return filtered;
   };
 
-  const filtered = getFilteredChars();
+  const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
+    const aggregateSection = document.getElementById("aggregate");
+    if (aggregateSection) {
+      const topPosition =
+        aggregateSection.getBoundingClientRect().top + window.pageYOffset - 100;
+      window.scrollTo({ top: topPosition, behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    const start = currentPage * itemsPerPage;
+    const end = start + itemsPerPage;
+    setCurrentItems(filtered.slice(start, end));
+  }, [filtered, currentPage]);
 
   const toggleCompare = (char) => {
     const existingIndex = compChar.findIndex((c) => c._id === char._id);
@@ -100,8 +128,8 @@ const DemplarApp = () => {
                 placeholder="Search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                onFocus={() => setShow(true)}
-                onBlur={() => setTimeout(() => setShow(false), 200)}
+                // onFocus={() => setShow(true)}
+                // onBlur={() => setTimeout(() => setShow(false), 200)}
                 className="bg-white text-black pl-10 pr-4 py-2 rounded border-2 border-yellow-600 focus:border-yellow-400 w-full"
               />
             </div>
@@ -128,7 +156,7 @@ const DemplarApp = () => {
               <option value="Pond">Pond</option>
               <option value="Pork">Pork</option>
             </select>
-            <button
+            {/* <button
               onClick={() => setShow(!show)}
               className="bg-yellow-600 text-black px-3 py-2 rounded hover:bg-yellow-500 w-full sm:w-auto"
             >
@@ -138,7 +166,7 @@ const DemplarApp = () => {
                   show ? "rotate-180" : ""
                 )}
               />
-            </button>
+            </button> */}
             <button
               onClick={() => {
                 setCompareMode(!compareMode);
@@ -158,7 +186,7 @@ const DemplarApp = () => {
             >
               ⚖️ Compare {compChar.length > 0 && `(${compChar.length})`}
             </button>
-            {show && filtered && filtered.length >= 0 && (
+            {/* {show && filtered && filtered.length >= 0 && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-yellow-600 rounded shadow-lg max-h-60 sm:max-h-80 overflow-y-auto z-50">
                 {filtered.map((c) => (
                   <div
@@ -196,7 +224,7 @@ const DemplarApp = () => {
                         </div>
                       </div>
                       {/* <div className="text-xs text-gray-400">#{c._id}</div> */}
-                    </Link>
+            {/* </Link>
                     <div className="flex space-x-1">
                       <button
                         onClick={(e) => {
@@ -250,21 +278,28 @@ const DemplarApp = () => {
                   </div>
                 )}
               </div>
-            )}
+            )} */}
           </div>
         </div>
         <div className="space-y-6">
           <div className="bg-white rounded-xl shadow border p-6">
-            <h3 className="text-2xl font-bold mb-6 flex items-center">
+            <h3
+              id="aggregate"
+              className="text-2xl font-bold mb-6 flex items-center"
+            >
               <span className="mr-3">👥</span>
               Character Database
               <span className="ml-auto text-sm font-normal text-gray-500">
-                Showing {filtered.length} of {chars.length} characters
+                Showing {currentPage * itemsPerPage}-
+                {(currentPage + 1) * itemsPerPage < filtered.length
+                  ? (currentPage + 1) * itemsPerPage
+                  : filtered.length}{" "}
+                of {filtered.length} characters
               </span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filtered.map((char) => {
+              {currentItems.map((char) => {
                 const faction = getFaction(char);
                 const colors = getFactionColors(faction);
 
@@ -446,6 +481,26 @@ const DemplarApp = () => {
                 </p>
               </div>
             )}
+            <div className="justify-center flex mt-6">
+              <ReactPaginate
+                previousLabel={"Previous"}
+                nextLabel={"Next"}
+                pageCount={Math.ceil(filtered.length / itemsPerPage)}
+                onPageChange={handlePageClick}
+                marginPagesDisplayed={2}
+                containerClassName="flex items-center gap-2 px-2 py-1 mt-2"
+                pageClassName=""
+                pageLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-yellow-100 transition-colors duration-150 cursor-pointer"
+                activeClassName="bg-yellow-400 text-white border-yellow-600"
+                previousClassName=""
+                nextClassName=""
+                previousLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-yellow-100 transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                nextLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-yellow-100 transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                breakClassName=""
+                breakLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 cursor-pointer"
+                disabledClassName="opacity-50 pointer-events-none"
+              />
+            </div>
           </div>
         </div>
       </div>
