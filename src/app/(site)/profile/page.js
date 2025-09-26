@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Share } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -11,6 +11,7 @@ import { useNotif } from "@/providers/NotifProvider";
 import { useChar } from "@/providers/CharProvider";
 import clsx from "clsx";
 import { urlFor } from "@/sanity/lib/image";
+import { useMeta } from "@/providers/MetaContext";
 // need to clsx this page still
 
 // Pure functions for character data transformation
@@ -20,11 +21,15 @@ const getLoreLevel = (char) => 100; // Updated lore level for all characters
 // Pure functional component for the main application
 const DemplarApp = () => {
   const { notify } = useNotif();
-
-  // State management (isolated side effects)
   const { chars, setChars, sel, setSel } = useChar();
   const { favorites, toggleFavorite, isFavorite, removeFavorite } =
     useFavorites();
+  const { setTitle, setDescription } = useMeta();
+
+  useEffect(() => {
+    setTitle("Profile");
+    //setDescription("Knights Demplar");
+  }, [setTitle, setDescription]);
 
   // Pure computed values (no side effects)
   const statsChars = chars.filter((c) => c.id !== 69);

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { characters } from "@/lib/characters";
 import { useNotif } from "@/providers/NotifProvider";
@@ -9,12 +9,19 @@ import clsx from "clsx";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { slugify } from "@/utils/slugify";
 import { useRouter } from "next/navigation";
+import { useMeta } from "@/providers/MetaContext";
 
 const DemplarApp = () => {
   const { notify } = useNotif();
   const { chars, setSel } = useChar();
   const { darkMode } = useDark();
   const router = useRouter();
+  const { setTitle, setDescription } = useMeta();
+
+  useEffect(() => {
+    setTitle("Home");
+    //setDescription("Knights Demplar");
+  }, [setTitle, setDescription]);
 
   // Pure computed values (no side effects)
   const statsChars = chars.filter((c) => c._id !== 69);
@@ -32,16 +39,16 @@ const DemplarApp = () => {
       <div
         className={clsx(
           `rounded-xl shadow-xl p-8 sm:p-12 transition-colors duration-300`,
-          darkMode
-            ? "bg-gradient-to-br from-gray-800 to-gray-900 text-white"
-            : "bg-gradient-to-br from-purple-900 to-purple-800 text-white"
+          "bg-gradient-to-br from-purple-900 to-purple-800 text-white",
+          "dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 dark:text-white"
         )}
       >
         <div className="text-center">
           <div
             className={clsx(
               `text-2xl sm:text-3xl font-bold mb-3 transition-colors duration-300`,
-              darkMode ? "text-gray-300" : "text-purple-200"
+              "text-purple-200",
+              "dark:text-gray-300"
             )}
           >
             Welcome to
@@ -52,7 +59,8 @@ const DemplarApp = () => {
           <p
             className={clsx(
               `text-2xl sm:text-3xl font-bold tracking-wide mb-8 transition-colors duration-300`,
-              darkMode ? "text-gray-100" : "text-purple-100"
+              "text-purple-100",
+              "dark:text-gray-100"
             )}
           >
             Home of the legendary Demplarverse
@@ -82,10 +90,20 @@ const DemplarApp = () => {
         </div>
       </div>
       {/* Leaderboard Preview Section */}
-      <div className="bg-white rounded-xl shadow-xl border p-6 sm:p-8">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6 flex items-center text-gray-800">
+      <div
+        className={clsx(
+          "bg-white rounded-xl shadow-xl border p-6 sm:p-8",
+          "dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900"
+        )}
+      >
+        <h2
+          className={clsx(
+            "text-2xl sm:text-3xl font-bold mb-6 flex items-center text-gray-800",
+            "dark:text-white"
+          )}
+        >
           <span className="mr-3">🏆</span>
-          Leaderboard Highlights
+          Hall Of Legends
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -93,16 +111,16 @@ const DemplarApp = () => {
           <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 border-2 border-yellow-200">
             <h3 className="text-lg font-bold mb-4 text-yellow-800 flex items-center">
               <span className="mr-2">👑</span>
-              Top 3 Overall Champions
+              Top Overall Legends
             </h3>
             <div className="space-y-3">
               {(() => {
                 const topOverall = [...chars]
                   .filter((c) => c.id !== 69)
                   .sort((a, b) => b.level - a.level)
-                  .slice(0, 3);
+                  .slice(0, 8);
 
-                const medals = ["🥇", "🥈", "🥉"];
+                const medals = ["🥇", "🥈", "🥉", "", ""];
 
                 return topOverall.map((char, index) => (
                   <Link
@@ -142,7 +160,7 @@ const DemplarApp = () => {
           {/* Faction Leaders */}
           <div className="space-y-4">
             {(() => {
-              const factions = ["Demplar", "Pond", "Pork"];
+              const factions = ["Demplar", "Pond", "Pork", "Undecided"];
               const factionColors = {
                 Demplar: {
                   bg: "from-red-50 to-gray-50",
@@ -166,6 +184,14 @@ const DemplarApp = () => {
                   title: "text-pink-800",
                   hover: "hover:bg-pink-50",
                   level: "text-pink-600",
+                  icon: "🐷",
+                },
+                Undecided: {
+                  bg: "from-purple-50 to-gray-50",
+                  border: "border-purple-200",
+                  title: "text-purple-800",
+                  hover: "hover:bg-purple-50",
+                  level: "text-purple-600",
                   icon: "🐷",
                 },
               };
@@ -198,7 +224,7 @@ const DemplarApp = () => {
                       )}
                     >
                       <span className="mr-2">{colors.icon}</span>
-                      {faction} Leaders
+                      {faction} Legends
                     </h4>
                     <div className="space-y-2">
                       {factionChars.map((char, index) => (
@@ -245,7 +271,7 @@ const DemplarApp = () => {
         <div className="mt-6 text-center">
           <Link
             href="characters"
-            className="text-sm text-gray-600 hover:text-gray-800 transition-colors"
+            className="text-sm text-gray-600 hover:text-gray-800 transition-colors dark:text-white"
           >
             View Full Character Rankings →
           </Link>

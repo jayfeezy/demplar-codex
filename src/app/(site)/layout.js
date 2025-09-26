@@ -1,8 +1,15 @@
 "use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
-import React, { useState } from "react";
-import { Eye, LogOut, Settings, Shield, User } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import {
+  ExternalLink,
+  Eye,
+  LogOut,
+  Settings,
+  Shield,
+  User,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -19,6 +26,8 @@ const geistMono = Geist_Mono({
 import { CharProvider, useChar } from "@/providers/CharProvider";
 import { DarkProvider, useDark } from "@/providers/DarkProvider";
 import { NotifProvider, useNotif } from "@/providers/NotifProvider";
+import { MetaProvider } from "@/providers/MetaContext";
+
 import { ProfileImage } from "@/components/ProfileImage";
 // import { useSupabase } from "@/providers/AuthProvider";
 
@@ -32,10 +41,15 @@ import clsx from "clsx";
 import { slugify } from "@/utils/slugify";
 import { urlFor } from "@/sanity/lib/image";
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, pageTitle = "Home" }) {
+  const siteName = "Knights Demplar Codex";
+
+  useEffect(() => {
+    document.title = pageTitle ? `${pageTitle} – ${siteName}` : siteName;
+  }, [pageTitle]);
+
   return (
-    <html lang="en">
-      {/* <SupabaseProvider initialSession={null}> */}
+    <MetaProvider>
       <DarkProvider>
         <NotifProvider>
           <CharProvider>
@@ -46,94 +60,101 @@ export default function RootLayout({ children }) {
           </CharProvider>
         </NotifProvider>
       </DarkProvider>
-      {/* </SupabaseProvider> */}
-    </html>
+    </MetaProvider>
   );
 }
 
 const Body = ({ children }) => {
   const { darkMode } = useDark();
   const { notif } = useNotif();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-      <Header />
-
-      <nav
-        className={clsx(
-          `shadow border-b sticky top-0 z-40 transition-colors duration-300`,
-          darkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
-        )}
+    <html lang="en" className={mounted && darkMode ? "dark" : ""}>
+      <body
+        className={clsx(geistSans.variable, geistMono.variable, "antialiased")}
       >
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex overflow-x-auto scrollbar-hide">
-            {[
-              "home",
-              "characters",
-              "favorites",
-              // "profile",
-              "stats",
-              "compare",
-              "news",
-              "suggestions",
-              // "admin",
-            ]
-              // .filter((t) => t !== "admin" || user.role === "master")
-              .map((t) => {
-                const iconMap = {
-                  home: "🏠",
-                  characters: "👥",
-                  favorites: "❤️",
-                  compare: "⚖️",
-                  news: "📰",
-                  suggestions: "📧",
-                  profile: <User className="w-4 h-4" />,
-                  stats: <Eye className="w-4 h-4" />,
-                  admin: <Settings className="w-4 h-4" />,
-                };
+        <Header />
 
-                return (
-                  <Link
-                    key={t}
-                    href={t === "home" ? "/" : `/${t}`}
-                    className={clsx(
-                      `py-4 px-4 sm:px-6 border-b-2 font-medium capitalize flex items-center space-x-2 whitespace-nowrap min-w-max touch-manipulation transition-colors duration-300`,
-                      darkMode
-                        ? "border-yellow-500 text-yellow-400 border-transparent text-gray-400 hover:text-gray-200"
-                        : "border-yellow-600 text-yellow-600 border-transparent text-gray-500 hover:text-gray-700"
-                    )}
-                  >
-                    <span className="text-lg">{iconMap[t]}</span>
-                    <span className="text-sm sm:text-base">{t}</span>
-                  </Link>
-                );
-              })}
+        <nav
+          className={clsx(
+            `shadow border-b sticky top-0 z-40 transition-colors duration-300`,
+            "bg-white border-gray-200",
+            "dark:bg-gray-800 dark:border-gray-700"
+          )}
+        >
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex overflow-x-auto scrollbar-hide">
+              {[
+                { title: "Home", icon: "🏠", href: "home" },
+                { title: "Characters", icon: "👥", href: "characters" },
+                { title: "Favorites", icon: "❤️", href: "favorites" },
+                // { title: "Profile", icon: "⚖️", href: "profile" },
+                {
+                  title: "Stats",
+                  icon: <User className="w-4 h-4" />,
+                  href: "stats",
+                },
+                { title: "Compare", icon: "⚖️", href: "compare" },
+                { title: "News", icon: "📰", href: "news" },
+                { title: "Suggestions", icon: "📧", href: "suggestions" },
+                {
+                  title: "Main Site",
+                  icon: <ExternalLink className="w-4 h-4" />,
+                  href: "https://knightsdemplar.com",
+                },
+                // {title: "Admin",icon: <Settings className="w-4 h-4" />, href: "admin",},
+              ]
+                // .filter((t) => t !== "admin" || user.role === "master")
+                .map((t) => {
+                  return (
+                    <Link
+                      key={t.title}
+                      href={t.href === "home" ? "/" : `${t.href}`}
+                      className={clsx(
+                        `py-4 px-4 sm:px-6 border-b-2 font-medium flex items-center space-x-2 whitespace-nowrap min-w-max touch-manipulation transition-colors duration-300`,
+                        "border-yellow-600 text-yellow-600 border-transparent text-gray-500 hover:text-gray-700",
+                        "dark:border-yellow-500 dark:text-yellow-400 dark:border-transparent dark:text-gray-400 dark:hover:text-gray-200"
+                      )}
+                      target={t.title === "Main Site" ? "_blank" : ""}
+                    >
+                      <span className="text-lg">{t.icon}</span>
+                      <span className="text-sm sm:text-base">{t.title}</span>
+                    </Link>
+                  );
+                })}
+            </div>
           </div>
+        </nav>
+
+        <div
+          className={clsx(
+            `min-h-screen transition-colors duration-300`,
+            "bg-gray-50",
+            "dark:bg-gray-900"
+          )}
+        >
+          {notif && (
+            <div
+              className={clsx(
+                `fixed top-4 right-4 z-50 border p-4 rounded-lg shadow-lg transition-colors duration-300`,
+                "bg-white border-gray-200 text-gray-900",
+                "dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
+              )}
+            >
+              {notif}
+            </div>
+          )}
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+            {children}
+          </main>
         </div>
-      </nav>
-
-      <div
-        className={clsx(
-          `min-h-screen transition-colors duration-300`,
-          darkMode ? "dark bg-gray-900" : "bg-gray-50"
-        )}
-      >
-        {notif && (
-          <div
-            className={clsx(
-              `fixed top-4 right-4 z-50 border p-4 rounded-lg shadow-lg transition-colors duration-300`,
-              darkMode
-                ? "bg-gray-800 border-gray-700 text-gray-100"
-                : "bg-white border-gray-200 text-gray-900"
-            )}
-          >
-            {notif}
-          </div>
-        )}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          {children}
-        </main>
-      </div>
-    </body>
+      </body>
+    </html>
   );
 };
 const Header = () => {
@@ -144,6 +165,11 @@ const Header = () => {
   const { darkMode, setDarkMode } = useDark();
   const { notify } = useNotif();
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const getCharacterOfDay = () => {
     const today = new Date().toDateString();
@@ -154,18 +180,18 @@ const Header = () => {
   const characterOfDay = getCharacterOfDay();
   return (
     <header
-      className={`relative shadow-xl transition-colors duration-300 bg-[url('https://res.cloudinary.com/dpr7n8ycn/image/upload/v1758333610/demplar-book-banner_btfgyl.webp')] bg-center bg-cover after:content-[''] after:absolute after:inset-0 after:bg-black/65 ${
-        darkMode
-          ? "bg-gradient-to-r from-gray-800 to-gray-900 text-white"
-          : "bg-gradient-to-r from-purple-900 to-purple-800 text-white"
-      }`}
+      className={clsx(
+        `relative shadow-xl transition-colors duration-300 bg-[url('https://res.cloudinary.com/dpr7n8ycn/image/upload/v1758333610/demplar-book-banner_btfgyl.webp')] bg-center bg-cover after:content-[''] after:absolute after:inset-0 after:bg-black/65`,
+        "bg-gradient-to-r from-purple-900 to-purple-800 text-white",
+        "dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 dark:text-white"
+      )}
     >
       <div
-        className={`relative z-3 px-4 py-3 border-b transition-colors duration-300 ${
-          darkMode
-            ? "bg-gray-900/90 border-gray-700"
-            : "bg-slate-800/90 border-slate-700"
-        }`}
+        className={clsx(
+          `relative z-3 px-4 py-3 border-b transition-colors duration-300`,
+          "bg-slate-800/90 border-slate-700",
+          "dark:bg-gray-900/90 dark:border-gray-700"
+        )}
       >
         <div className="flex justify-between items-center max-w-7xl mx-auto">
           <h1 className="text-lg sm:text-xl font-bold">
@@ -177,19 +203,23 @@ const Header = () => {
               onClick={() => {
                 setDarkMode(!darkMode);
                 notify(
-                  darkMode
+                  mounted && darkMode
                     ? "Light mode activated! ☀️"
                     : "Dark mode activated! 🌙"
                 );
               }}
-              className={`px-3 py-1.5 border rounded text-xs sm:text-sm min-h-[36px] min-w-[36px] flex items-center justify-center transition-colors duration-300 hover:opacity-80 ${
-                darkMode
-                  ? "bg-yellow-600/20 border-yellow-600/30 text-yellow-400"
-                  : "bg-gray-600/20 border-gray-600/30 text-gray-300"
-              }`}
-              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              className={clsx(
+                `px-3 py-1.5 border rounded text-xs sm:text-sm min-h-[36px] min-w-[36px] flex items-center justify-center transition-colors duration-300 hover:opacity-80`,
+                "bg-gray-600/20 border-gray-600/30 text-gray-300",
+                "dark:bg-yellow-600/20 dark:border-yellow-600/30 dark:text-yellow-400"
+              )}
+              title={
+                mounted && darkMode
+                  ? "Switch to Light Mode"
+                  : "Switch to Dark Mode"
+              }
             >
-              {darkMode ? "☀️" : "🌙"}
+              {mounted && darkMode ? "☀️" : "🌙"}
             </button>
             {/* <div
               className={`px-2 sm:px-3 py-1.5 border rounded text-xs sm:text-sm ${

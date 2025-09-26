@@ -15,7 +15,6 @@ export const useFavorites = () => {
     }
   });
 
-  // Persist favorites whenever they change
   useEffect(() => {
     try {
       localStorage.setItem(

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useNotif } from "@/providers/NotifProvider";
@@ -8,12 +8,19 @@ import clsx from "clsx";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import { slugify } from "@/utils/slugify";
+import { useMeta } from "@/providers/MetaContext";
 
 const DemplarApp = () => {
   const { chars, setChars, sel, setSel } = useChar();
   const { favorites, toggleFavorite, isFavorite, removeFavorite } =
     useFavorites();
   const { notify } = useNotif();
+  const { setTitle, setDescription } = useMeta();
+
+  useEffect(() => {
+    setTitle("Favorites");
+    //setDescription("Knights Demplar");
+  }, [setTitle, setDescription]);
 
   return (
     <div className="space-y-6">
@@ -23,7 +30,7 @@ const DemplarApp = () => {
           My Favorite Characters
         </h3>
 
-        {favorites.size === 0 ? (
+        {!favorites || favorites.size === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <div className="text-6xl mb-4">💔</div>
             <p className="text-lg mb-2">No favorites yet</p>
@@ -72,7 +79,6 @@ const DemplarApp = () => {
                                 : ""
                             }
                             alt={char.name || ""}
-                            fill
                             className="w-full h-full object-cover"
                             // onError={(e) => {
                             //   e.target.style.display = "none";
