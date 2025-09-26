@@ -18,7 +18,7 @@ const DemplarApp = () => {
   }, [setTitle, setDescription]);
 
   const sendEmail = (subject, body) => {
-    const emailAddress = "your@email.com";
+    const emailAddress = "jfeez30@gmail.com";
     const encodedSubject = encodeURIComponent(subject);
     const encodedBody = encodeURIComponent(body);
     const mailtoLink = `mailto:${emailAddress}?subject=${encodedSubject}&body=${encodedBody}`;
