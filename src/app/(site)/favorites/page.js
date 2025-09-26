@@ -30,7 +30,7 @@ const DemplarApp = () => {
           My Favorite Characters
         </h3>
 
-        {favorites.size === 0 ? (
+        {!favorites || favorites.size === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <div className="text-6xl mb-4">💔</div>
             <p className="text-lg mb-2">No favorites yet</p>
@@ -79,7 +79,6 @@ const DemplarApp = () => {
                                 : ""
                             }
                             alt={char.name || ""}
-                            fill
                             className="w-full h-full object-cover"
                             // onError={(e) => {
                             //   e.target.style.display = "none";

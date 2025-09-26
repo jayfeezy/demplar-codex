@@ -2,7 +2,14 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import React, { useEffect, useState } from "react";
-import { Eye, LogOut, Settings, Shield, User } from "lucide-react";
+import {
+  ExternalLink,
+  Eye,
+  LogOut,
+  Settings,
+  Shield,
+  User,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -83,42 +90,40 @@ const Body = ({ children }) => {
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex overflow-x-auto scrollbar-hide">
               {[
-                "home",
-                "characters",
-                "favorites",
-                // "profile",
-                "stats",
-                "compare",
-                "news",
-                "suggestions",
-                // "admin",
+                { title: "Home", icon: "🏠", href: "home" },
+                { title: "Characters", icon: "👥", href: "characters" },
+                { title: "Favorites", icon: "❤️", href: "favorites" },
+                // { title: "Profile", icon: "⚖️", href: "profile" },
+                {
+                  title: "Stats",
+                  icon: <User className="w-4 h-4" />,
+                  href: "stats",
+                },
+                { title: "Compare", icon: "⚖️", href: "compare" },
+                { title: "News", icon: "📰", href: "news" },
+                { title: "Suggestions", icon: "📧", href: "suggestions" },
+                {
+                  title: "Main Site",
+                  icon: <ExternalLink className="w-4 h-4" />,
+                  href: "https://knightsdemplar.com",
+                },
+                // {title: "Admin",icon: <Settings className="w-4 h-4" />, href: "admin",},
               ]
                 // .filter((t) => t !== "admin" || user.role === "master")
                 .map((t) => {
-                  const iconMap = {
-                    home: "🏠",
-                    characters: "👥",
-                    favorites: "❤️",
-                    compare: "⚖️",
-                    news: "📰",
-                    suggestions: "📧",
-                    profile: <User className="w-4 h-4" />,
-                    stats: <Eye className="w-4 h-4" />,
-                    admin: <Settings className="w-4 h-4" />,
-                  };
-
                   return (
                     <Link
-                      key={t}
-                      href={t === "home" ? "/" : `/${t}`}
+                      key={t.title}
+                      href={t.href === "home" ? "/" : `${t.href}`}
                       className={clsx(
-                        `py-4 px-4 sm:px-6 border-b-2 font-medium capitalize flex items-center space-x-2 whitespace-nowrap min-w-max touch-manipulation transition-colors duration-300`,
+                        `py-4 px-4 sm:px-6 border-b-2 font-medium flex items-center space-x-2 whitespace-nowrap min-w-max touch-manipulation transition-colors duration-300`,
                         "border-yellow-600 text-yellow-600 border-transparent text-gray-500 hover:text-gray-700",
                         "dark:border-yellow-500 dark:text-yellow-400 dark:border-transparent dark:text-gray-400 dark:hover:text-gray-200"
                       )}
+                      target={t.title === "Main Site" ? "_blank" : ""}
                     >
-                      <span className="text-lg">{iconMap[t]}</span>
-                      <span className="text-sm sm:text-base">{t}</span>
+                      <span className="text-lg">{t.icon}</span>
+                      <span className="text-sm sm:text-base">{t.title}</span>
                     </Link>
                   );
                 })}

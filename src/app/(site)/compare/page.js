@@ -61,12 +61,18 @@ const DemplarApp = () => {
           <div className="text-center py-8 text-gray-500">
             <div className="text-4xl mb-4">⚖️</div>
             <p className="text-lg mb-2">
-              No characters selected for comparison
+              No characters selected for comparison. <br />
+              Enable compare mode under the characters tab.
             </p>
-            <p className="text-sm">
-              Enable compare mode and click the + button next to characters to
-              add them!
-            </p>
+            <div className="text-sm">
+              1. Click the button that says &quot;Compare.&quot;
+            </div>
+            <div className="text-sm">
+              2. Click the + button next to characters to add them.
+            </div>
+            <div className="text-sm">
+              3. Then proceed over to the compare tab.
+            </div>
             <p className="text-xs mt-2 text-gray-400">
               You can compare up to 3 characters at once
             </p>

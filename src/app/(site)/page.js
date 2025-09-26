@@ -103,7 +103,7 @@ const DemplarApp = () => {
           )}
         >
           <span className="mr-3">🏆</span>
-          Leaderboard Highlights
+          Hall Of Legends
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -111,16 +111,16 @@ const DemplarApp = () => {
           <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 border-2 border-yellow-200">
             <h3 className="text-lg font-bold mb-4 text-yellow-800 flex items-center">
               <span className="mr-2">👑</span>
-              Top 3 Overall Champions
+              Top Overall Legends
             </h3>
             <div className="space-y-3">
               {(() => {
                 const topOverall = [...chars]
                   .filter((c) => c.id !== 69)
                   .sort((a, b) => b.level - a.level)
-                  .slice(0, 3);
+                  .slice(0, 8);
 
-                const medals = ["🥇", "🥈", "🥉"];
+                const medals = ["🥇", "🥈", "🥉", "", ""];
 
                 return topOverall.map((char, index) => (
                   <Link
@@ -160,7 +160,7 @@ const DemplarApp = () => {
           {/* Faction Leaders */}
           <div className="space-y-4">
             {(() => {
-              const factions = ["Demplar", "Pond", "Pork"];
+              const factions = ["Demplar", "Pond", "Pork", "Undecided"];
               const factionColors = {
                 Demplar: {
                   bg: "from-red-50 to-gray-50",
@@ -184,6 +184,14 @@ const DemplarApp = () => {
                   title: "text-pink-800",
                   hover: "hover:bg-pink-50",
                   level: "text-pink-600",
+                  icon: "🐷",
+                },
+                Undecided: {
+                  bg: "from-purple-50 to-gray-50",
+                  border: "border-purple-200",
+                  title: "text-purple-800",
+                  hover: "hover:bg-purple-50",
+                  level: "text-purple-600",
                   icon: "🐷",
                 },
               };
@@ -216,7 +224,7 @@ const DemplarApp = () => {
                       )}
                     >
                       <span className="mr-2">{colors.icon}</span>
-                      {faction} Leaders
+                      {faction} Legends
                     </h4>
                     <div className="space-y-2">
                       {factionChars.map((char, index) => (

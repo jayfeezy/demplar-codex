@@ -185,7 +185,7 @@ Thank you!`;
               <h5 className="font-semibold text-gray-700 mb-2">📋 Preview:</h5>
               <div className="text-sm text-gray-600 space-y-1">
                 <div>
-                  <strong>To:</strong> your@email.com
+                  <strong>To:</strong> jfeez30@gmail.com
                 </div>
                 <div>
                   <strong>Subject:</strong> Demplar:{" "}

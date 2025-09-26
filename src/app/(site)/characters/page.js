@@ -32,7 +32,7 @@ const DemplarApp = () => {
   const [filtered, setFiltered] = useState([]);
   const [currentItems, setCurrentItems] = useState(filtered.slice(0, 10));
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 12;
+  const [perPage, setPerPage] = useState(12);
 
   useEffect(() => {
     setTitle("Characters");
@@ -43,7 +43,7 @@ const DemplarApp = () => {
     setFiltered(getFilteredChars(chars));
     setCurrentPage(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chars, search, levelFilter, factionFilter, favorites]);
+  }, [chars, search, levelFilter, factionFilter, favorites, perPage]);
 
   // useEffect(() => {
   //   search.length > 3 ? setShow(true) : setShow(false);
@@ -98,10 +98,10 @@ const DemplarApp = () => {
   };
 
   useEffect(() => {
-    const start = currentPage * itemsPerPage;
-    const end = start + itemsPerPage;
+    const start = currentPage * perPage;
+    const end = start + perPage;
     setCurrentItems(filtered.slice(start, end));
-  }, [filtered, currentPage]);
+  }, [filtered, currentPage, perPage]);
 
   const toggleCompare = (char) => {
     const existingIndex = compChar.findIndex((c) => c._id === char._id);
@@ -155,6 +155,7 @@ const DemplarApp = () => {
               <option value="Demplar">Demplar</option>
               <option value="Pond">Pond</option>
               <option value="Pork">Pork</option>
+              <option value="Undecided">Undecided</option>
             </select>
             {/* <button
               onClick={() => setShow(!show)}
@@ -290,9 +291,9 @@ const DemplarApp = () => {
               <span className="mr-3">👥</span>
               Character Database
               <span className="ml-auto text-sm font-normal text-gray-500">
-                Showing {currentPage * itemsPerPage}-
-                {(currentPage + 1) * itemsPerPage < filtered.length
-                  ? (currentPage + 1) * itemsPerPage
+                Showing {currentPage * perPage}-
+                {(currentPage + 1) * perPage < filtered.length
+                  ? (currentPage + 1) * perPage
                   : filtered.length}{" "}
                 of {filtered.length} characters
               </span>
@@ -481,26 +482,41 @@ const DemplarApp = () => {
                 </p>
               </div>
             )}
-            <div className="justify-center flex mt-6">
-              <ReactPaginate
-                previousLabel={"Previous"}
-                nextLabel={"Next"}
-                pageCount={Math.ceil(filtered.length / itemsPerPage)}
-                onPageChange={handlePageClick}
-                marginPagesDisplayed={2}
-                containerClassName="flex items-center gap-2 px-2 py-1 mt-2"
-                pageClassName=""
-                pageLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-yellow-100 transition-colors duration-150 cursor-pointer"
-                activeClassName="bg-yellow-400 text-white border-yellow-600"
-                previousClassName=""
-                nextClassName=""
-                previousLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-yellow-100 transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                nextLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-yellow-100 transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                breakClassName=""
-                breakLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 cursor-pointer"
-                disabledClassName="opacity-50 pointer-events-none"
-              />
-            </div>
+            {filtered.length > perPage && (
+              <>
+                <div className="justify-center flex mt-6">
+                  <ReactPaginate
+                    previousLabel={"Previous"}
+                    nextLabel={"Next"}
+                    pageCount={Math.ceil(filtered.length / perPage)}
+                    onPageChange={handlePageClick}
+                    marginPagesDisplayed={2}
+                    containerClassName="flex items-center gap-2 px-2 py-1 mt-2"
+                    pageClassName=""
+                    pageLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-yellow-100 transition-colors duration-150 cursor-pointer"
+                    activeClassName="bg-yellow-400 text-white border-yellow-600"
+                    previousClassName=""
+                    nextClassName=""
+                    previousLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-yellow-100 transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    nextLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-yellow-100 transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    breakClassName=""
+                    breakLinkClassName="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 cursor-pointer"
+                    disabledClassName="opacity-50 pointer-events-none"
+                  />
+                </div>
+                <div className="justify-center flex mt-6">
+                  <select
+                    value={perPage}
+                    onChange={(e) => setPerPage(e.target.value)}
+                    className="bg-white text-black px-3 py-2 rounded border-2 border-gray-600 focus:border-gray-400"
+                  >
+                    <option value="12">12 Characters</option>
+                    <option value="24">24 Characters</option>
+                    <option value="48">48 Characters</option>
+                  </select>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
