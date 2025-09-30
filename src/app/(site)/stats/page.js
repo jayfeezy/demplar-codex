@@ -103,7 +103,7 @@ const DemplarApp = () => {
               });
 
             // Define faction order and colors
-            const factionOrder = ["Demplar", "Pond", "Pork"];
+            const factionOrder = ["Demplar", "Pond", "Pork", "Undecided"];
             const factionColors = {
               Demplar: {
                 bg: "bg-gradient-to-br from-red-50 to-gray-50",
@@ -125,6 +125,13 @@ const DemplarApp = () => {
                 accent: "text-pink-700",
                 statBg: "bg-pink-100",
                 icon: "🐷",
+              },
+              Undecided: {
+                bg: "bg-gradient-to-br from-purple-50 to-gray-50",
+                border: "border-purple-200",
+                accent: "text-purple-700",
+                statBg: "bg-purple-100",
+                icon: "❓",
               },
             };
 

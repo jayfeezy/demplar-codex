@@ -192,7 +192,7 @@ const DemplarApp = () => {
                   title: "text-purple-800",
                   hover: "hover:bg-purple-50",
                   level: "text-purple-600",
-                  icon: "🐷",
+                  icon: "❓",
                 },
               };
 
