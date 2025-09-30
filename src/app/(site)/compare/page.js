@@ -64,15 +64,25 @@ const DemplarApp = () => {
               No characters selected for comparison. <br />
               Enable compare mode under the characters tab.
             </p>
-            <div className="text-sm">
-              1. Click the button that says &quot;Compare.&quot;
-            </div>
-            <div className="text-sm">
-              2. Click the + button next to characters to add them.
-            </div>
-            <div className="text-sm">
-              3. Then proceed over to the compare tab.
-            </div>
+            <p className="text-sm">1. Open the Characters tab.</p>
+            <p className="text-sm">
+              2. Click the Compare button. It will activate and add a + next to
+              each character’s View Profile. <br />
+              (The Compare button will show how many characters you select e.g.,
+              Compare (2)).
+            </p>
+            <p className="text-sm">
+              3. Choose 2 or 3 characters by clicking the + next to each one.
+              Each selected + turns into a checkmark (✓).
+            </p>
+            <p className="text-sm">
+              4. Open the Compare tab. Your selected characters appear
+              side-by-side (or in a row on mobile).
+            </p>{" "}
+            <p className="text-sm">
+              5. Scroll down in the Compare tab to see more detailed comparison
+              info.
+            </p>
             <p className="text-xs mt-2 text-gray-400">
               You can compare up to 3 characters at once
             </p>

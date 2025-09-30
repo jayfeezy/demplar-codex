@@ -30,7 +30,13 @@ const DemplarApp = () => {
           My Favorite Characters
         </h3>
 
-        {!favorites || favorites.size === 0 ? (
+        {(!favorites &&
+          ![...favorites].filter((e) =>
+            chars.find((f) => {
+              f._id = e;
+            })
+          )) ||
+        favorites.size === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <div className="text-6xl mb-4">💔</div>
             <p className="text-lg mb-2">No favorites yet</p>
@@ -47,7 +53,11 @@ const DemplarApp = () => {
         ) : (
           <div>
             <div className="mb-4 text-sm text-gray-600">
-              You have {favorites.size} favorite
+              You have{" "}
+              {!!favorites.size &&
+                [...favorites].filter((e) => chars.find((f) => f._id === e))
+                  .length}{" "}
+              favorite
               {favorites.size !== 1 ? "s" : ""}
             </div>
 
@@ -86,7 +96,20 @@ const DemplarApp = () => {
                             // }}
                           />
                         ) : (
-                          "test"
+                          <img
+                            src={urlFor(
+                              "https://cdn.sanity.io/images/b8j3518v/production/9f8b24620df68414a0b8046f1f7d02e7ba440ce4-286x291.png"
+                            )
+                              .width(250)
+                              .height(250)
+                              .url()}
+                            alt={char.name || ""}
+                            className="w-full h-full object-cover"
+                            // onError={(e) => {
+                            //   e.target.style.display = "none";
+                            //   e.target.nextSibling.style.display = "flex";
+                            // }}
+                          />
                         )}
                         <div
                           className={clsx(
@@ -105,7 +128,10 @@ const DemplarApp = () => {
                             .toUpperCase()}
                         </div>
 
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div
+                          className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"
+                          oldClass="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
                           <div className="absolute bottom-0 left-0 right-0 p-2 text-white">
                             <div className="text-xs font-bold truncate">
                               {char.name}
